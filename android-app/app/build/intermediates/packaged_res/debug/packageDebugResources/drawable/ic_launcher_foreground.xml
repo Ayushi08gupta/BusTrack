@@ -1,0 +1,62 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- ================= SOFT PASTEL BACKGROUND ================= -->
+    <path
+        android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#C4B5FD"/> <!-- lavender -->
+                <item android:offset="0.5" android:color="#7DD3FC"/> <!-- sky blue -->
+                <item android:offset="1.0" android:color="#6EE7B7"/> <!-- mint -->
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- ================= BUS BODY ================= -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,62
+                          H80
+                          C84,62 86,64 86,68
+                          V76
+                          H22
+                          V68
+                          C22,64 24,62 28,62 Z"/>
+
+    <!-- ================= WINDOWS ================= -->
+    <path
+        android:fillColor="#7DD3FC"
+        android:pathData="M30,66 H40 V72 H30 Z"/>
+    <path
+        android:fillColor="#7DD3FC"
+        android:pathData="M44,66 H54 V72 H44 Z"/>
+    <path
+        android:fillColor="#7DD3FC"
+        android:pathData="M58,66 H68 V72 H58 Z"/>
+
+    <!-- ================= LOCATION PIN (TOP) ================= -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,18
+                          C46,18 40,24 40,32
+                          C40,44 54,56 54,56
+                          C54,56 68,44 68,32
+                          C68,24 62,18 54,18 Z"/>
+
+    <!-- PIN INNER DOT -->
+    <path
+        android:fillColor="#C4B5FD"
+        android:pathData="M54,28
+                          A6,6 0 1,1 53.9,28 Z"/>
+
+</vector>

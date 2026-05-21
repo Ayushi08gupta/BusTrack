@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body, html, #map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f3f4f6;
+        }
+        .bus-icon {
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+        }
+        .stop-icon {
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map;
+        var busMarker;
+        var stopMarkers = [];
+        var routeLine;
+
+        // Custom Leaflet Icons
+        var busIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png', // Gorgeous Bus Icon
+            iconSize: [42, 42],
+            iconAnchor: [21, 21],
+            className: 'bus-icon'
+        });
+
+        var stopIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1483/1483336.png', // Marker Pin
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            className: 'stop-icon'
+        });
+
+        // Initialize Map
+        function initMap(lat, lng) {
+            if (map) return;
+            map = L.map('map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView([lat, lng], 14);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            }).addTo(map);
+        }
+
+        // Draw Route & Stops
+        function drawRoute(stopsJsonStr) {
+            try {
+                var stops = JSON.parse(stopsJsonStr);
+                
+                // Clear old stops & polyline
+                stopMarkers.forEach(m => map.removeLayer(m));
+                stopMarkers = [];
+                if (routeLine) {
+                    map.removeLayer(routeLine);
+                }
+
+                var points = [];
+
+                stops.forEach(function(stop) {
+                    var lat = stop.latitude;
+                    var lng = stop.longitude;
+                    points.push([lat, lng]);
+
+                    var marker = L.marker([lat, lng], { icon: stopIcon })
+                        .addTo(map)
+                        .bindPopup('<b>' + stop.name + '</b><br>ETA: ' + (stop.eta || 'Scheduled'));
+                    stopMarkers.push(marker);
+                });
+
+                if (points.length > 0) {
+                    routeLine = L.polyline(points, {
+                        color: '#1E3A8A', // Primary Blue color matching design system!
+                        weight: 5,
+                        opacity: 0.8,
+                        dashArray: '10, 5' // Elegant dash polyline
+                    }).addTo(map);
+
+                    // Fit bounds to polyline
+                    map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+                }
+            } catch (e) {
+                console.error("Leaflet drawRoute error:", e);
+            }
+        }
+
+        // Smoothly Move Bus Marker
+        function updateBusMarker(lat, lng, status) {
+            if (!map) {
+                initMap(lat, lng);
+            }
+
+            var position = [lat, lng];
+
+            if (!busMarker) {
+                busMarker = L.marker(position, { icon: busIcon }).addTo(map);
+            } else {
+                // Smooth transition
+                var start = busMarker.getLatLng();
+                var end = L.latLng(position);
+                var duration = 1000; // 1 second interpolation
+                var startTime = performance.now();
+
+                function animate(time) {
+                    var elapsed = time - startTime;
+                    var progress = Math.min(elapsed / duration, 1);
+                    var currentLat = start.lat + (end.lat - start.lat) * progress;
+                    var currentLng = start.lng + (end.lng - start.lng) * progress;
+                    busMarker.setLatLng([currentLat, currentLng]);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+
+            // Auto-follow Mode: Center camera on bus
+            map.panTo(position);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">#6EE7B7</color>
+    <color name="accent_dark">#5EDBA0</color>
+    <color name="background">#F8FAFC</color>
+    <color name="border">#E2E8F0</color>
+    <color name="card_bg">#CCFFFFFF</color>
+    <color name="card_dark">#CC1A1A1A</color>
+    <color name="danger_red">#EF4444</color>
+    <color name="error">#FF6B6B</color>
+    <color name="foreground">#2D2D2D</color>
+    <color name="peach">#FDBA74</color>
+    <color name="primary">#C4B5FD</color>
+    <color name="primary_dark">#A995F7</color>
+    <color name="primary_light">#DDD6FE</color>
+    <color name="purple_200">#DDD6FE</color>
+    <color name="purple_500">#C4B5FD</color>
+    <color name="purple_700">#A995F7</color>
+    <color name="secondary">#7DD3FC</color>
+    <color name="secondary_dark">#6DC4F0</color>
+    <color name="success_green">#22C55E</color>
+    <color name="surface_soft">#F8FAFC</color>
+    <color name="teal_200">#7DD3FC</color>
+    <color name="teal_700">#6DC4F0</color>
+    <color name="text_primary">#1E293B</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="warning">#F97316</color>
+    <color name="white">#FFFFFF</color>
+    <string name="app_name">BusTrack</string>
+    <style name="Theme.BusTrack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/secondary</item>
+    </style>
+    <style name="Theme.BusTrack.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>

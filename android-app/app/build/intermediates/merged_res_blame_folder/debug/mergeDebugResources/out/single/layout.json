@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-33:\\layout\\activity_login.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-33:\\layout\\activity_register.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_register.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-33:\\layout\\dialog_forgot_password.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\dialog_forgot_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-33:\\layout\\activity_driver_dashboard.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_driver_dashboard.xml"
+    },
+    {
+        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/activity_admin_dashboard.xml",
+        "source": "com.college.bustrack.app-main-36:/layout/activity_admin_dashboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-33:\\layout\\item_user.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\item_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-33:\\layout\\activity_student_dashboard.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_student_dashboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-33:\\layout\\activity_admin_dashboard.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_admin_dashboard.xml"
+    }
+]

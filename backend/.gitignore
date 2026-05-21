@@ -1,3 +1,4 @@
 node_modules/
-.env.ds_store
+.env
+.ds_store
 dist/

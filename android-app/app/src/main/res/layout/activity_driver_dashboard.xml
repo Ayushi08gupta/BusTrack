@@ -8,27 +8,17 @@
     android:background="@color/background"
     tools:context=".DriverDashboardActivity">
 
-    <!-- ================= MAP SECTION ================= -->
-    <FrameLayout
-        android:id="@+id/mapContainer"
+    <!-- OpenStreetMap MapView -->
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#E5E7EB"
         app:layout_constraintBottom_toTopOf="@id/bottomSheet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="LIVE MAP HERE 🗺️"
-            android:textColor="@color/text_secondary"
-            android:textStyle="bold" />
-    </FrameLayout>
-
-    <!-- ================= TOP HEADER ================= -->
+    <!-- Top Header -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/headerCard"
         android:layout_width="0dp"
@@ -77,19 +67,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Bus: Loading..."
+                android:text="Bus: Tracking Active"
                 android:textColor="#E0E7FF"
                 android:textSize="14sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- ================= BOTTOM SHEET ================= -->
+    <!-- Bottom Info Panel -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomSheet"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        app:cardBackgroundColor="@color/card_bg"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="20dp"
         app:cardElevation="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -103,74 +93,12 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvRouteName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Route: Loading..."
-                android:textColor="@color/text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
                 android:id="@+id/tvTripStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
                 android:text="Status: INACTIVE"
-                android:textColor="@color/text_secondary" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Stops"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tvStopsCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ETA"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tvRouteDuration"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="-- mins"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
+                android:textColor="@color/text_secondary"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -181,35 +109,25 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnStartTrip"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="56dp"
                     android:layout_weight="1"
-                    android:text="START"
-                    android:textColor="@color/white"
+                    android:text="START TRIP"
+                    android:textStyle="bold"
                     app:backgroundTint="@color/success_green"
                     app:cornerRadius="12dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEndTrip"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="56dp"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:text="END"
-                    android:textColor="@color/white"
+                    android:text="STOP TRIP"
+                    android:textStyle="bold"
                     android:visibility="gone"
                     app:backgroundTint="@color/danger_red"
                     app:cornerRadius="12dp" />
             </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDelay"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_marginTop="10dp"
-                android:text="SEND DELAY ALERT"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/warning"
-                app:cornerRadius="12dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

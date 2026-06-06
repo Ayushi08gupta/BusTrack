@@ -67,7 +67,28 @@ router.post('/users', protect, adminOnly, async (req, res) => {
   }
 });
 
-// @desc    Add stop (Fixed key mismatch)
+// @desc    Add stop to a bus's route
+// @route   POST /api/admin/bus/:busId/stops
+router.post('/bus/:busId/stops', protect, adminOnly, async (req, res) => {
+  const { name, latitude, longitude } = req.body;
+  try {
+    const bus = await Bus.findById(req.params.busId);
+    if (!bus) return res.status(404).json({ message: 'Bus not found' });
+    if (!bus.routeId) return res.status(400).json({ message: 'This bus has no route assigned. Assign a route first.' });
+
+    const route = await Route.findById(bus.routeId);
+    if (!route) return res.status(404).json({ message: 'Route not found' });
+
+    route.stops.push({ name, latitude, longitude });
+    await route.save();
+    res.json({ message: 'Stop added successfully to ' + bus.busNumber, route });
+  } catch (error) {
+    console.error('Add stop error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// @desc    Add stop (Existing endpoint maintained for compatibility)
 router.post('/routes/:routeId/stops', protect, adminOnly, async (req, res) => {
   const { name, latitude, longitude } = req.body;
   try {
@@ -99,6 +120,57 @@ router.delete('/users/:id', protect, adminOnly, async (req, res) => {
     res.json({ message: 'User deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// @desc    Assign driver and route to bus
+// @route   POST /api/admin/assign
+router.post('/assign', protect, adminOnly, async (req, res) => {
+  const { driverId, busId, routeId } = req.body;
+  console.log('Assignment request:', { driverId, busId, routeId });
+  try {
+    const bus = await Bus.findById(busId);
+    if (!bus) {
+        console.log('Bus not found:', busId);
+        return res.status(404).json({ message: 'Bus not found' });
+    }
+
+    if (driverId) {
+        try {
+            const driver = await User.findById(driverId);
+            if (!driver || driver.role !== 'driver') {
+                console.log('Driver not found or not a driver:', driverId);
+                return res.status(404).json({ message: 'Driver not found' });
+            }
+            bus.driverId = driverId;
+            driver.assignedBusId = busId;
+            await driver.save();
+        } catch (err) {
+            console.error('Error finding/saving driver:', err.message);
+            return res.status(400).json({ message: 'Invalid Driver ID' });
+        }
+    }
+
+    if (routeId) {
+        try {
+            const route = await Route.findById(routeId);
+            if (!route) {
+                console.log('Route not found:', routeId);
+                return res.status(404).json({ message: 'Route not found' });
+            }
+            bus.routeId = routeId;
+        } catch (err) {
+            console.error('Error finding route:', err.message);
+            return res.status(400).json({ message: 'Invalid Route ID' });
+        }
+    }
+
+    await bus.save();
+    console.log('Assignment successful for bus:', busId);
+    res.json({ message: 'Assignment successful' });
+  } catch (error) {
+    console.error('Assignment server error:', error.message);
+    res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
 

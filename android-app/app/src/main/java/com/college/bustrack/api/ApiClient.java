@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
     // UPDATED FOR YOUR REAL DEVICE:
     // Both phone and laptop must be on the same Wi-Fi (192.168.0.x)
-    public static String BASE_URL = "http://192.168.0.111:5001/"; 
+    public static String BASE_URL = "http://192.168.72.7:5001/";
     
     private static Retrofit retrofit = null;
 

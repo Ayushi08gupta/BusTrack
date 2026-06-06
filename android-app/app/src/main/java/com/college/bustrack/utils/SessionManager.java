@@ -58,6 +58,11 @@ public class SessionManager {
         return pref.getString(KEY_ASSIGNED_BUS_ID, null);
     }
 
+    public void setAssignedBusId(String busId) {
+        editor.putString(KEY_ASSIGNED_BUS_ID, busId);
+        editor.apply();
+    }
+
     public boolean isFirstLogin() {
         return pref.getBoolean(KEY_IS_FIRST_LOGIN, true);
     }

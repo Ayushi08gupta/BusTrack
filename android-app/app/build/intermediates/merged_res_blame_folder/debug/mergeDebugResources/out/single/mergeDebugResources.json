@@ -1,90 +1,86 @@
 [
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-mdpi\\ic_launcher.webp"
+        "merged": "com.college.bustrack.app-debug-34:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\layout_activity_register.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_register.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\layout_activity_driver_dashboard.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_driver_dashboard.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-mdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+        "merged": "com.college.bustrack.app-debug-34:/layout_activity_driver_dashboard.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/layout/activity_driver_dashboard.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\drawable_ic_launcher_foreground.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\drawable\\ic_launcher_foreground.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\layout_dialog_forgot_password.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\dialog_forgot_password.xml"
-    },
-    {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-anydpi-v26\\ic_launcher.xml"
-    },
-    {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-xxxhdpi\\ic_launcher.webp"
+        "merged": "com.college.bustrack.app-debug-34:/layout_activity_register.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/layout/activity_register.xml"
     },
     {
         "merged": "com.college.bustrack.app-debug-34:/layout_activity_admin_dashboard.xml.flat",
         "source": "com.college.bustrack.app-main-36:/layout/activity_admin_dashboard.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\layout_activity_student_dashboard.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_student_dashboard.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\layout_item_user.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\item_user.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-xxxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\layout_activity_login.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_login.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-xhdpi\\ic_launcher_round.webp"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-xhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-hdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-hdpi\\ic_launcher.webp"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-hdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\layout_activity_admin_dashboard.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\layout\\activity_admin_dashboard.xml"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-xxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-xxhdpi\\ic_launcher.webp"
+        "merged": "com.college.bustrack.app-debug-34:/layout_dialog_forgot_password.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/layout/dialog_forgot_password.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-hdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-hdpi\\ic_launcher_round.webp"
+        "merged": "com.college.bustrack.app-debug-34:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\drawable_ic_launcher_background.xml.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\drawable\\ic_launcher_background.xml"
+        "merged": "com.college.bustrack.app-debug-34:/layout_activity_login.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/layout/activity_login.xml"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-xhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-xhdpi\\ic_launcher.webp"
+        "merged": "com.college.bustrack.app-debug-34:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.college.bustrack.app-main-36:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-34:\\mipmap-mdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-36:\\mipmap-mdpi\\ic_launcher_round.webp"
+        "merged": "com.college.bustrack.app-debug-34:/layout_item_user.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/layout/item_user.xml"
+    },
+    {
+        "merged": "com.college.bustrack.app-debug-34:/layout_activity_student_dashboard.xml.flat",
+        "source": "com.college.bustrack.app-main-36:/layout/activity_student_dashboard.xml"
     }
 ]

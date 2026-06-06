@@ -69,6 +69,16 @@
                     android:layout_marginStart="8dp"
                     android:text="Routes"
                     app:cornerRadius="20dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTabAssign"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Assign"
+                    app:cornerRadius="20dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -211,9 +221,9 @@
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Route ID (e.g., Route_A)">
+                            android:hint="Select Bus (ID or Number)">
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etRouteId"
+                                android:id="@+id/etRouteBusId"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -221,7 +231,7 @@
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Stop Name"
+                            android:hint="Stop Name (e.g., MP Nagar)"
                             android:layout_marginTop="8dp">
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etStopName"
@@ -266,6 +276,77 @@
                             android:text="Add Stop to Route"
                             android:layout_marginTop="16dp"
                             app:backgroundTint="#4CAF50" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/containerAssign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Assignments"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Bus ID (Mongo ID)">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etAssignBusId"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Driver ID (Mongo ID)"
+                            android:layout_marginTop="8dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etAssignDriverId"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Route ID (Mongo ID)"
+                            android:layout_marginTop="8dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etAssignRouteId"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSubmitAssign"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Apply Assignment"
+                            android:layout_marginTop="16dp"
+                            app:backgroundTint="#FF9800" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>

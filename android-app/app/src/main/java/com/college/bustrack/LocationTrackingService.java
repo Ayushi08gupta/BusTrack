@@ -53,7 +53,9 @@ public class LocationTrackingService extends Service {
     private SessionManager sessionManager;
     private ApiService apiService;
     private String busId;
+    private String driverId;
     private String token;
+    private String tripId;
 
     @Override
     public void onCreate() {
@@ -61,6 +63,7 @@ public class LocationTrackingService extends Service {
         sessionManager = new SessionManager(this);
         apiService = ApiClient.getApiService();
         busId = sessionManager.getAssignedBusId();
+        driverId = sessionManager.getUserId();
         token = sessionManager.getToken();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -77,6 +80,10 @@ public class LocationTrackingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            tripId = intent.getStringExtra("trip_id");
+        }
+
         Notification notification = getNotification("Live location tracking is active.");
         
         // CRITICAL FIX FOR ANDROID 14 (API 34)
@@ -87,11 +94,34 @@ public class LocationTrackingService extends Service {
         }
         
         startLocationUpdates();
+        emitTripStarted();
         return START_STICKY;
+    }
+
+    private void emitTripStarted() {
+        if (mSocket != null && busId != null) {
+            try {
+                JSONObject data = new JSONObject();
+                data.put("busId", busId);
+                data.put("driverId", driverId);
+                data.put("tripId", tripId);
+                mSocket.emit("trip:started", data);
+            } catch (JSONException e) {
+                Log.e(TAG, "JSON error", e);
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
+        // Initial location grab to sync map immediately
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                emitLocationSocket(location.getLatitude(), location.getLongitude(), location.getSpeed(), location.getBearing());
+                updateLocationRest(location.getLatitude(), location.getLongitude(), location.getSpeed(), location.getBearing());
+            }
+        });
+
         LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
                 .setMinUpdateIntervalMillis(2000)
                 .build();
@@ -101,8 +131,11 @@ public class LocationTrackingService extends Service {
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) return;
                 for (Location location : locationResult.getLocations()) {
-                    emitLocationSocket(location.getLatitude(), location.getLongitude());
-                    updateLocationRest(location.getLatitude(), location.getLongitude());
+                    float speed = location.getSpeed(); // m/s
+                    float heading = location.getBearing(); // degrees
+
+                    emitLocationSocket(location.getLatitude(), location.getLongitude(), speed, heading);
+                    updateLocationRest(location.getLatitude(), location.getLongitude(), speed, heading);
                 }
             }
         };
@@ -110,13 +143,18 @@ public class LocationTrackingService extends Service {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
-    private void emitLocationSocket(double lat, double lng) {
+    private void emitLocationSocket(double lat, double lng, float speed, float heading) {
         if (mSocket != null && mSocket.connected() && busId != null) {
             try {
                 JSONObject data = new JSONObject();
                 data.put("busId", busId);
+                data.put("driverId", driverId);
+                data.put("tripId", tripId);
                 data.put("latitude", lat);
                 data.put("longitude", lng);
+                data.put("speed", speed);
+                data.put("heading", heading);
+                data.put("status", "active");
                 mSocket.emit("location:update", data);
             } catch (JSONException e) {
                 Log.e(TAG, "JSON error", e);
@@ -124,9 +162,9 @@ public class LocationTrackingService extends Service {
         }
     }
 
-    private void updateLocationRest(double lat, double lng) {
+    private void updateLocationRest(double lat, double lng, float speed, float heading) {
         if (token != null) {
-            LocationUpdateRequest request = new LocationUpdateRequest(lat, lng, "active");
+            LocationUpdateRequest request = new LocationUpdateRequest(busId, driverId, tripId, lat, lng, speed, heading, "active");
             apiService.updateLocation(token, request).enqueue(new Callback<Bus>() {
                 @Override
                 public void onResponse(Call<Bus> call, Response<Bus> response) {
@@ -168,11 +206,25 @@ public class LocationTrackingService extends Service {
 
     @Override
     public void onDestroy() {
+        emitTripEnded();
         super.onDestroy();
         if (fusedLocationClient != null && locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
         if (mSocket != null) mSocket.disconnect();
+    }
+
+    private void emitTripEnded() {
+        if (mSocket != null && busId != null) {
+            try {
+                JSONObject data = new JSONObject();
+                data.put("busId", busId);
+                data.put("tripId", tripId);
+                mSocket.emit("trip:ended", data);
+            } catch (JSONException e) {
+                Log.e(TAG, "JSON error", e);
+            }
+        }
     }
 
     @Nullable

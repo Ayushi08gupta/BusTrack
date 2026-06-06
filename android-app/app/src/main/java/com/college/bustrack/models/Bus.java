@@ -14,6 +14,8 @@ public class Bus {
     public static class CurrentLocation {
         private double latitude;
         private double longitude;
+        private float speed;
+        private float heading;
         private String timestamp;
 
         // Getters & Setters
@@ -22,6 +24,12 @@ public class Bus {
 
         public double getLongitude() { return longitude; }
         public void setLongitude(double longitude) { this.longitude = longitude; }
+
+        public float getSpeed() { return speed; }
+        public void setSpeed(float speed) { this.speed = speed; }
+
+        public float getHeading() { return heading; }
+        public void setHeading(float heading) { this.heading = heading; }
 
         public String getTimestamp() { return timestamp; }
         public void setTimestamp(String timestamp) { this.timestamp = timestamp; }

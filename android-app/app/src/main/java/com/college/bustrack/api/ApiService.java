@@ -1,5 +1,6 @@
 package com.college.bustrack.api;
 
+import com.college.bustrack.models.AssignRequest;
 import com.college.bustrack.models.Bus;
 import com.college.bustrack.models.GenericResponse;
 import com.college.bustrack.models.LocationUpdateRequest;
@@ -8,6 +9,8 @@ import com.college.bustrack.models.LoginResponse;
 import com.college.bustrack.models.RegisterRequest;
 import com.college.bustrack.models.Route;
 import com.college.bustrack.models.User;
+
+import com.college.bustrack.models.Trip;
 
 import java.util.List;
 import java.util.Map;
@@ -80,7 +83,26 @@ public interface ApiService {
     @DELETE("api/admin/users/{id}")
     Call<GenericResponse> adminDeleteUser(@Header("Authorization") String token, @Path("id") String id);
 
+    @POST("api/admin/bus/{busId}/stops")
+    Call<GenericResponse> adminAddStopToBus(@Header("Authorization") String token, @Path("busId") String busId, @Body Map<String, Object> stopData);
+
     // FIXED: Changed :routeId to {routeId}
     @POST("api/admin/routes/{routeId}/stops")
     Call<GenericResponse> adminAddStop(@Header("Authorization") String token, @Path("routeId") String routeId, @Body Map<String, Object> stopData);
+
+    // Assignment & Journey
+    @POST("api/admin/assign")
+    Call<GenericResponse> adminAssign(@Header("Authorization") String token, @Body AssignRequest body);
+
+    @POST("api/driver/start-journey")
+    Call<Trip> startJourney(@Header("Authorization") String token, @Body Map<String, String> body);
+
+    @POST("api/driver/stop-journey")
+    Call<GenericResponse> stopJourney(@Header("Authorization") String token, @Body Map<String, String> body);
+
+    @GET("api/bus/status/{busId}")
+    Call<Map<String, String>> getBusStatus(@Header("Authorization") String token, @Path("busId") String busId);
+
+    @GET("api/bus/location/{busId}")
+    Call<Bus.CurrentLocation> getBusLocation(@Header("Authorization") String token, @Path("busId") String busId);
 }

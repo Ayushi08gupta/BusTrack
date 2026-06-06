@@ -1,0 +1,7 @@
+◇ injected env (5) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+Server running on http://0.0.0.0:5001
+MongoDB connected successfully.
+Fetching assignment for user: new ObjectId('6a2316ea17e3844c8a056d2a') Role: driver
+Found bus: BUS-DEBUG-1
+Fetching assignment for user: new ObjectId('6a2316ea17e3844c8a056d2a') Role: driver
+Found bus: BUS-DEBUG-1

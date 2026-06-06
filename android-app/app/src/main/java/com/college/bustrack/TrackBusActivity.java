@@ -132,7 +132,11 @@ public class TrackBusActivity extends AppCompatActivity {
         updateStatus(bus.getStatus());
         
         if (bus.getCurrentLocation() != null) {
-            updateBusLocation(new GeoPoint(bus.getCurrentLocation().getLatitude(), bus.getCurrentLocation().getLongitude()));
+            updateBusLocation(
+                new GeoPoint(bus.getCurrentLocation().getLatitude(), bus.getCurrentLocation().getLongitude()),
+                bus.getCurrentLocation().getSpeed(),
+                bus.getCurrentLocation().getHeading()
+            );
         }
         
         if (bus.getRouteId() != null && bus.getRouteId().getStops() != null) {
@@ -198,9 +202,22 @@ public class TrackBusActivity extends AppCompatActivity {
                     if (data.getString("busId").equals(busId)) {
                         double lat = data.getDouble("latitude");
                         double lng = data.getDouble("longitude");
-                        new Handler(Looper.getMainLooper()).post(() -> updateBusLocation(new GeoPoint(lat, lng)));
+                        double speed = data.optDouble("speed", 0.0);
+                        double heading = data.optDouble("heading", 0.0);
+
+                        new Handler(Looper.getMainLooper()).post(() -> 
+                            updateBusLocation(new GeoPoint(lat, lng), (float) speed, (float) heading)
+                        );
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
+            });
+
+            mSocket.on("trip:started", args -> {
+                new Handler(Looper.getMainLooper()).post(() -> updateStatus("active"));
+            });
+
+            mSocket.on("trip:ended", args -> {
+                new Handler(Looper.getMainLooper()).post(() -> updateStatus("inactive"));
             });
 
             mSocket.on("bus:offline", args -> {
@@ -211,15 +228,19 @@ public class TrackBusActivity extends AppCompatActivity {
         } catch (URISyntaxException e) { e.printStackTrace(); }
     }
 
-    private void updateBusLocation(GeoPoint point) {
+    private void updateBusLocation(GeoPoint point, float speed, float heading) {
         busMarker.setPosition(point);
+        busMarker.setRotation(heading); // Rotate marker to match direction
         map.getController().animateTo(point);
         tvLiveStatus.setText("LIVE");
         tvLiveStatus.setBackgroundColor(ContextCompat.getColor(this, R.color.success_green));
         tvLiveStatus.setTextColor(Color.WHITE);
-        
-        // Mocking some movement values
-        tvSpeed.setText("42 km/h");
+
+        // Convert speed from m/s to km/h
+        int speedKmH = (int) (speed * 3.6);
+        tvSpeed.setText(speedKmH + " km/h");
+
+        // Keeping mocked ETA and Distance for now as per requirement
         tvDistance.setText("1.8 km");
         tvETA.setText("08:35 AM");
     }

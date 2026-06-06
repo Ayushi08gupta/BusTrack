@@ -7,6 +7,8 @@ const busSchema = new mongoose.Schema({
   currentLocation: {
     latitude: { type: Number, default: null },
     longitude: { type: Number, default: null },
+    speed: { type: Number, default: 0 },
+    heading: { type: Number, default: 0 },
     timestamp: { type: Date, default: null }
   },
   status: { type: String, enum: ['active', 'inactive', 'maintenance'], default: 'inactive' }

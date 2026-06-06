@@ -105,4 +105,16 @@ router.get('/routes', protect, async (req, res) => {
   }
 });
 
+// @desc    Get bus status
+// @route   GET /api/bus/status/:id
+router.get('/bus/status/:id', protect, async (req, res) => {
+    try {
+        const bus = await Bus.findById(req.params.id);
+        if (!bus) return res.status(404).json({ message: 'Bus not found' });
+        res.json({ status: bus.status });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;

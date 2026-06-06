@@ -270,6 +270,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
     }
 
     private void updateBusLocation(GeoPoint point) {
+        if (point == null || (point.getLatitude() == 0 && point.getLongitude() == 0)) return;
         busMarker.setPosition(point);
         busMarker.setVisible(true);
         map.getController().animateTo(point);

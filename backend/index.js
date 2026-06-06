@@ -40,12 +40,20 @@ io.on('connection', (socket) => {
 
   // Driver emits location update
   socket.on('location:update', async (data) => {
-    // data should contain { busId, latitude, longitude }
-    const { busId, latitude, longitude } = data;
+    // data should contain { busId, latitude, longitude, speed, heading, status }
+    const { busId, latitude, longitude, speed, heading, status } = data;
 
     if (busId && latitude !== undefined && longitude !== undefined) {
       const timestamp = new Date();
-      const payload = { busId, latitude, longitude, timestamp, status: 'active' };
+      const payload = {
+        busId,
+        latitude,
+        longitude,
+        speed: speed || 0,
+        heading: heading || 0,
+        timestamp,
+        status: status || 'active'
+      };
 
       // Broadcast to everyone (students and admins) tracking this bus in real-time inside the room
       io.to(busId).emit('location:update', payload);
@@ -53,8 +61,8 @@ io.on('connection', (socket) => {
       // Persist to MongoDB asynchronously so it doesn't block the socket thread
       try {
         await Bus.findByIdAndUpdate(busId, {
-          currentLocation: { latitude, longitude, timestamp },
-          status: 'active'
+          currentLocation: { latitude, longitude, speed: speed || 0, heading: heading || 0, timestamp },
+          status: status || 'active'
         });
 
         await LiveLocation.create({
@@ -67,6 +75,17 @@ io.on('connection', (socket) => {
         console.error('Error updating location via Socket:', err.message);
       }
     }
+  });
+
+  // Trip events
+  socket.on('trip:started', (data) => {
+      const { busId, driverId, tripId } = data;
+      io.to(busId).emit('trip:started', { busId, driverId, tripId, status: 'ONLINE' });
+  });
+
+  socket.on('trip:ended', (data) => {
+      const { busId, tripId } = data;
+      io.to(busId).emit('trip:ended', { busId, tripId, status: 'OFFLINE' });
   });
 
   // Driver ends trip or goes offline

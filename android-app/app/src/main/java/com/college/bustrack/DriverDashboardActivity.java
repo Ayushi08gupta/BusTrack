@@ -24,16 +24,16 @@ import com.college.bustrack.models.Trip;
 import com.college.bustrack.utils.SessionManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.button.MaterialButton;
-
-import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,13 +44,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DriverDashboardActivity extends AppCompatActivity {
+public class DriverDashboardActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int PERMISSION_REQUEST_CODE = 1001;
 
-    private MapView map;
-    private MyLocationNewOverlay locationOverlay;
-    private RotationGestureOverlay rotationGestureOverlay;
+    private com.google.android.gms.maps.MapView map;
+    private GoogleMap googleMap;
     private Polyline routePolyline;
     private List<Marker> stopMarkers = new ArrayList<>();
     private FusedLocationProviderClient fusedLocationClient;
@@ -68,10 +67,6 @@ public class DriverDashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Initialize OSMDroid configuration
-        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-        
         setContentView(R.layout.activity_driver_dashboard);
 
         sessionManager = new SessionManager(this);
@@ -79,7 +74,8 @@ public class DriverDashboardActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         initViews();
-        setupMap();
+        map.onCreate(savedInstanceState);
+        map.getMapAsync(this);
 
         if (sessionManager.getUserName() != null) {
             tvWelcomeDriver.setText("Hello, " + sessionManager.getUserName());
@@ -197,60 +193,48 @@ public class DriverDashboardActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        setupMap();
+    }
+
     private void setupMap() {
-        map.setMultiTouchControls(true);
-        map.getController().setZoom(18.0);
-        map.getController().setCenter(new GeoPoint(23.2599, 77.4126)); // Initial center
+        if (googleMap == null) return;
 
-        // Initialize Route Polyline
-        routePolyline = new Polyline();
-        routePolyline.getOutlinePaint().setColor(android.graphics.Color.BLUE);
-        routePolyline.getOutlinePaint().setStrokeWidth(8f);
-        map.getOverlays().add(routePolyline);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setRotateGesturesEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.2599, 77.4126), 15f));
 
-        // 1. Smooth "Follow Me" and Marker Rotation using MyLocationNewOverlay
-        locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
-        locationOverlay.enableMyLocation();
-        locationOverlay.enableFollowLocation();
-        locationOverlay.setDrawAccuracyEnabled(true); // Shows orientation arrow
-        map.getOverlays().add(locationOverlay);
-
-        // 2. RotationGestureOverlay to allow map rotation (Uber-like feel)
-        rotationGestureOverlay = new RotationGestureOverlay(map);
-        rotationGestureOverlay.setEnabled(true);
-        map.getOverlays().add(rotationGestureOverlay);
-        
-        // 3. Automated "Bearing-to-North" orientation listener
-        // This ensures the map rotates to match the direction of travel
-        locationOverlay.runOnFirstFix(() -> runOnUiThread(() -> {
-            if (locationOverlay.getMyLocation() != null) {
-                map.getController().animateTo(locationOverlay.getMyLocation());
-            }
-        }));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            googleMap.setMyLocationEnabled(true);
+        }
     }
 
     private void drawRoute(List<com.college.bustrack.models.Stop> stops) {
-        if (stops == null) return;
+        if (googleMap == null || stops == null) return;
         
         // Clear old stop markers
-        for (Marker m : stopMarkers) map.getOverlays().remove(m);
+        for (Marker m : stopMarkers) m.remove();
         stopMarkers.clear();
 
-        List<GeoPoint> points = new ArrayList<>();
+        if (routePolyline != null) routePolyline.remove();
+
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .color(android.graphics.Color.BLUE)
+                .width(10f);
+
         for (com.college.bustrack.models.Stop stop : stops) {
-            GeoPoint gp = new GeoPoint(stop.getLatitude(), stop.getLongitude());
-            points.add(gp);
+            LatLng latLng = new LatLng(stop.getLatitude(), stop.getLongitude());
+            polylineOptions.add(latLng);
             
-            Marker stopMarker = new Marker(map);
-            stopMarker.setPosition(gp);
-            stopMarker.setTitle(stop.getName());
-            stopMarker.setIcon(ContextCompat.getDrawable(this, android.R.drawable.presence_online));
-            stopMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-            map.getOverlays().add(stopMarker);
-            stopMarkers.add(stopMarker);
+            Marker stopMarker = googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(stop.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            if (stopMarker != null) stopMarkers.add(stopMarker);
         }
-        routePolyline.setPoints(points);
-        map.invalidate();
+        routePolyline = googleMap.addPolyline(polylineOptions);
     }
 
     private boolean checkAndRequestPermissions() {
@@ -322,13 +306,41 @@ public class DriverDashboardActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         map.onResume();
-        if (locationOverlay != null) locationOverlay.enableMyLocation();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         map.onPause();
-        if (locationOverlay != null) locationOverlay.disableMyLocation();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        map.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        map.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        map.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        map.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        map.onLowMemory();
     }
 }

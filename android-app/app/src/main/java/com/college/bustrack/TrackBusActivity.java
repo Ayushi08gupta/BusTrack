@@ -12,9 +12,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.college.bustrack.api.ApiClient;
 import com.college.bustrack.api.ApiService;
 import com.college.bustrack.models.Bus;
@@ -25,11 +35,6 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Polyline;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -41,9 +46,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TrackBusActivity extends AppCompatActivity {
+public class TrackBusActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private MapView map;
+    private com.google.android.gms.maps.MapView map;
+    private GoogleMap googleMap;
     private Marker busMarker;
     private Polyline routePolyline;
     
@@ -62,7 +68,6 @@ public class TrackBusActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Configuration.getInstance().setUserAgentValue(getPackageName());
         setContentView(R.layout.activity_track_bus);
 
         busId = getIntent().getStringExtra("bus_id");
@@ -70,8 +75,8 @@ public class TrackBusActivity extends AppCompatActivity {
         apiService = ApiClient.getApiService();
 
         initViews();
-        setupMap();
-        setupSocket();
+        map.onCreate(savedInstanceState);
+        map.getMapAsync(this);
         loadBusDetails();
     }
 
@@ -93,20 +98,17 @@ public class TrackBusActivity extends AppCompatActivity {
         });
     }
 
-    private void setupMap() {
-        map.setMultiTouchControls(true);
-        map.getController().setZoom(16.5);
-        
-        busMarker = new Marker(map);
-        busMarker.setTitle("Bus Location");
-        busMarker.setIcon(ContextCompat.getDrawable(this, android.R.drawable.ic_menu_directions));
-        busMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(busMarker);
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        setupMap();
+        setupSocket();
+    }
 
-        routePolyline = new Polyline();
-        routePolyline.getOutlinePaint().setColor(Color.parseColor("#C4B5FD"));
-        routePolyline.getOutlinePaint().setStrokeWidth(12f);
-        map.getOverlays().add(routePolyline);
+    private void setupMap() {
+        if (googleMap == null) return;
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.2599, 77.4126), 15f));
     }
 
     private void loadBusDetails() {
@@ -133,7 +135,7 @@ public class TrackBusActivity extends AppCompatActivity {
         
         if (bus.getCurrentLocation() != null) {
             updateBusLocation(
-                new GeoPoint(bus.getCurrentLocation().getLatitude(), bus.getCurrentLocation().getLongitude()),
+                new LatLng(bus.getCurrentLocation().getLatitude(), bus.getCurrentLocation().getLongitude()),
                 bus.getCurrentLocation().getSpeed(),
                 bus.getCurrentLocation().getHeading()
             );
@@ -145,19 +147,24 @@ public class TrackBusActivity extends AppCompatActivity {
     }
 
     private void drawRoute(List<Stop> stops) {
-        List<GeoPoint> points = new ArrayList<>();
+        if (googleMap == null || stops == null) return;
+
+        if (routePolyline != null) routePolyline.remove();
+
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .color(Color.parseColor("#C4B5FD"))
+                .width(12f);
+
         for (Stop stop : stops) {
-            GeoPoint gp = new GeoPoint(stop.getLatitude(), stop.getLongitude());
-            points.add(gp);
+            LatLng latLng = new LatLng(stop.getLatitude(), stop.getLongitude());
+            polylineOptions.add(latLng);
             
-            Marker sm = new Marker(map);
-            sm.setPosition(gp);
-            sm.setTitle(stop.getName());
-            sm.setIcon(ContextCompat.getDrawable(this, android.R.drawable.presence_online));
-            map.getOverlays().add(sm);
+            googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(stop.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         }
-        routePolyline.setPoints(points);
-        map.invalidate();
+        routePolyline = googleMap.addPolyline(polylineOptions);
     }
 
     private void buildTimeline(List<Stop> stops) {
@@ -206,7 +213,7 @@ public class TrackBusActivity extends AppCompatActivity {
                         double heading = data.optDouble("heading", 0.0);
 
                         new Handler(Looper.getMainLooper()).post(() -> 
-                            updateBusLocation(new GeoPoint(lat, lng), (float) speed, (float) heading)
+                            updateBusLocation(new LatLng(lat, lng), (float) speed, (float) heading)
                         );
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -228,10 +235,20 @@ public class TrackBusActivity extends AppCompatActivity {
         } catch (URISyntaxException e) { e.printStackTrace(); }
     }
 
-    private void updateBusLocation(GeoPoint point, float speed, float heading) {
-        busMarker.setPosition(point);
-        busMarker.setRotation(heading); // Rotate marker to match direction
-        map.getController().animateTo(point);
+    private void updateBusLocation(LatLng point, float speed, float heading) {
+        if (googleMap == null || point == null) return;
+
+        if (busMarker == null) {
+            busMarker = googleMap.addMarker(new MarkerOptions()
+                    .position(point)
+                    .title("Bus Location")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        } else {
+            busMarker.setPosition(point);
+            busMarker.setRotation(heading);
+        }
+
+        googleMap.animateCamera(CameraUpdateFactory.newLatLng(point));
         tvLiveStatus.setText("LIVE");
         tvLiveStatus.setBackgroundColor(ContextCompat.getColor(this, R.color.success_green));
         tvLiveStatus.setTextColor(Color.WHITE);
@@ -256,12 +273,45 @@ public class TrackBusActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() { super.onResume(); map.onResume(); }
+    protected void onResume() {
+        super.onResume();
+        map.onResume();
+    }
+
     @Override
-    protected void onPause() { super.onPause(); map.onPause(); }
+    protected void onPause() {
+        super.onPause();
+        map.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        map.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        map.onStop();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        map.onDestroy();
         if (mSocket != null) mSocket.disconnect();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        map.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        map.onLowMemory();
     }
 }

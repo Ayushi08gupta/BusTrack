@@ -8,8 +8,8 @@
     android:background="@color/background"
     tools:context=".DriverDashboardActivity">
 
-    <!-- OpenStreetMap MapView -->
-    <org.osmdroid.views.MapView
+    <!-- Google Maps MapView -->
+    <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="0dp"
         android:layout_height="0dp"

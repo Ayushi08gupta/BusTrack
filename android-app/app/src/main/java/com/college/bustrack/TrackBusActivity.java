@@ -2,34 +2,37 @@ package com.college.bustrack;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
 import com.college.bustrack.api.ApiClient;
 import com.college.bustrack.api.ApiService;
 import com.college.bustrack.models.Bus;
 import com.college.bustrack.models.Stop;
 import com.college.bustrack.utils.SessionManager;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.chip.Chip;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Polyline;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -41,147 +44,111 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TrackBusActivity extends AppCompatActivity {
+public class TrackBusActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private MapView map;
+    private static final String TAG = "TrackBusActivity";
+    private GoogleMap mMap;
+    private Socket mSocket;
+    private String busId;
     private Marker busMarker;
     private Polyline routePolyline;
-    
-    private Socket mSocket;
-    private SessionManager sessionManager;
-    private ApiService apiService;
-    
-    private TextView tvBusId, tvDriver, tvSpeed, tvETA, tvNextStop, tvDistance, tvLiveStatus;
-    private LinearLayout timelineContainer;
-    private MaterialButton btnBack;
-    private ExtendedFloatingActionButton fabReport;
+    private List<Marker> stopMarkers = new ArrayList<>();
 
-    private String busId;
-    private Bus currentBus;
+    private TextView tvBusNumber, tvDriverName, tvETA, tvDistance, tvNextStop, tvRemainingStops;
+    private Chip chipStatus;
+    private ImageButton btnBack;
+    private MaterialButton btnReportIssue;
+
+    private ApiService apiService;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Configuration.getInstance().setUserAgentValue(getPackageName());
         setContentView(R.layout.activity_track_bus);
 
-        busId = getIntent().getStringExtra("bus_id");
-        sessionManager = new SessionManager(this);
+        busId = getIntent().getStringExtra("BUS_ID");
+        if (busId == null) {
+            Toast.makeText(this, "Bus ID missing", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         apiService = ApiClient.getApiService();
+        sessionManager = new SessionManager(this);
 
         initViews();
-        setupMap();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+
+        fetchBusDetails();
         setupSocket();
-        loadBusDetails();
     }
 
     private void initViews() {
-        map = findViewById(R.id.mapView);
-        tvBusId = findViewById(R.id.tvBusId);
-        tvDriver = findViewById(R.id.tvDriver);
-        tvSpeed = findViewById(R.id.tvSpeed);
+        tvBusNumber = findViewById(R.id.tvBusNumber);
+        tvDriverName = findViewById(R.id.tvDriverName);
         tvETA = findViewById(R.id.tvETA);
-        tvNextStop = findViewById(R.id.tvNextStop);
         tvDistance = findViewById(R.id.tvDistance);
-        tvLiveStatus = findViewById(R.id.tvLiveStatus);
-        timelineContainer = findViewById(R.id.timelineContainer);
+        tvNextStop = findViewById(R.id.tvNextStop);
+        tvRemainingStops = findViewById(R.id.tvRemainingStops);
+        chipStatus = findViewById(R.id.chipStatus);
         btnBack = findViewById(R.id.btnBack);
-        fabReport = findViewById(R.id.fabReport);
+        btnReportIssue = findViewById(R.id.btnReportIssue);
 
         btnBack.setOnClickListener(v -> finish());
-        fabReport.setOnClickListener(v -> {
+        
+        btnReportIssue.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ReportIssueActivity.class);
+            intent.putExtra("BUS_ID", busId);
+            startActivity(intent);
         });
     }
 
-    private void setupMap() {
-        map.setMultiTouchControls(true);
-        map.getController().setZoom(16.5);
-        
-        busMarker = new Marker(map);
-        busMarker.setTitle("Bus Location");
-        busMarker.setIcon(ContextCompat.getDrawable(this, android.R.drawable.ic_menu_directions));
-        busMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(busMarker);
-
-        routePolyline = new Polyline();
-        routePolyline.getOutlinePaint().setColor(Color.parseColor("#C4B5FD"));
-        routePolyline.getOutlinePaint().setStrokeWidth(12f);
-        map.getOverlays().add(routePolyline);
-    }
-
-    private void loadBusDetails() {
-        apiService.searchBuses(sessionManager.getToken(), busId).enqueue(new Callback<List<Bus>>() {
+    private void fetchBusDetails() {
+        apiService.getBusFullDetails(sessionManager.getToken(), busId).enqueue(new Callback<Bus>() {
             @Override
-            public void onResponse(Call<List<Bus>> call, Response<List<Bus>> response) {
-                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                    currentBus = response.body().get(0);
-                    updateUI(currentBus);
-                    drawRoute(currentBus.getRouteId().getStops());
+            public void onResponse(Call<Bus> call, Response<Bus> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    updateUI(response.body());
                 }
             }
             @Override
-            public void onFailure(Call<List<Bus>> call, Throwable t) {
-                Toast.makeText(TrackBusActivity.this, "Error loading bus data", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<Bus> call, Throwable t) {
+                Toast.makeText(TrackBusActivity.this, "Error fetching details", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void updateUI(Bus bus) {
-        tvBusId.setText("Bus: " + bus.getBusNumber());
-        tvDriver.setText("Driver: " + (bus.getDriverId() != null ? bus.getDriverId().getName() : "N/A"));
+        tvBusNumber.setText("Bus: " + (bus.getBusNumber() != null ? bus.getBusNumber() : "N/A"));
+        if (bus.getDriverId() != null) {
+            tvDriverName.setText("Driver: " + bus.getDriverId().getName());
+        }
         updateStatus(bus.getStatus());
         
-        if (bus.getCurrentLocation() != null) {
-            updateBusLocation(
-                new GeoPoint(bus.getCurrentLocation().getLatitude(), bus.getCurrentLocation().getLongitude()),
-                bus.getCurrentLocation().getSpeed(),
-                bus.getCurrentLocation().getHeading()
-            );
-        }
-        
-        if (bus.getRouteId() != null && bus.getRouteId().getStops() != null) {
-            buildTimeline(bus.getRouteId().getStops());
+        if (bus.getRouteId() != null && bus.getRouteId().getStops() != null && !bus.getRouteId().getStops().isEmpty()) {
+            List<Stop> stops = bus.getRouteId().getStops();
+            drawRoute(stops);
+            
+            Stop next = stops.get(0);
+            tvNextStop.setText("Next Stop: " + next.getName());
+            tvETA.setText(next.getEta()); // Show the first stop's scheduled time as initial ETA
+            tvRemainingStops.setText(stops.size() + " stops total");
         }
     }
 
-    private void drawRoute(List<Stop> stops) {
-        List<GeoPoint> points = new ArrayList<>();
-        for (Stop stop : stops) {
-            GeoPoint gp = new GeoPoint(stop.getLatitude(), stop.getLongitude());
-            points.add(gp);
-            
-            Marker sm = new Marker(map);
-            sm.setPosition(gp);
-            sm.setTitle(stop.getName());
-            sm.setIcon(ContextCompat.getDrawable(this, android.R.drawable.presence_online));
-            map.getOverlays().add(sm);
-        }
-        routePolyline.setPoints(points);
-        map.invalidate();
-    }
-
-    private void buildTimeline(List<Stop> stops) {
-        timelineContainer.removeAllViews();
-        for (int i = 0; i < stops.size(); i++) {
-            View itemView = LayoutInflater.from(this).inflate(R.layout.item_timeline_stop, timelineContainer, false);
-            TextView tvStopName = itemView.findViewById(R.id.tvStopName);
-            View indicator = itemView.findViewById(R.id.indicator);
-            View line = itemView.findViewById(R.id.line);
-
-            tvStopName.setText(stops.get(i).getName());
-            
-            // For now, let's mark the first stop as current/active for UI demo
-            if (i == 0) {
-                tvStopName.setTextColor(ContextCompat.getColor(this, R.color.primary_dark));
-                tvStopName.setTypeface(null, android.graphics.Typeface.BOLD);
-                ((GradientDrawable)indicator.getBackground()).setColor(ContextCompat.getColor(this, R.color.primary));
-            }
-
-            if (i == stops.size() - 1) {
-                line.setVisibility(View.GONE);
-            }
-
-            timelineContainer.addView(itemView);
+    private void updateStatus(String status) {
+        if ("active".equalsIgnoreCase(status)) {
+            chipStatus.setText("LIVE");
+            chipStatus.setChipBackgroundColorResource(android.R.color.holo_green_dark);
+        } else {
+            chipStatus.setText("OFFLINE");
+            chipStatus.setChipBackgroundColorResource(android.R.color.darker_gray);
         }
     }
 
@@ -189,79 +156,86 @@ public class TrackBusActivity extends AppCompatActivity {
         try {
             mSocket = IO.socket(ApiClient.getBaseUrl());
             mSocket.on(Socket.EVENT_CONNECT, args -> {
-                JSONObject data = new JSONObject();
+                JSONObject joinData = new JSONObject();
                 try {
-                    data.put("busId", busId);
-                    mSocket.emit("join:bus", data);
+                    joinData.put("busId", busId);
+                    mSocket.emit("join:bus", joinData);
                 } catch (JSONException e) { e.printStackTrace(); }
             });
 
             mSocket.on("location:update", args -> {
                 JSONObject data = (JSONObject) args[0];
-                try {
-                    if (data.getString("busId").equals(busId)) {
-                        double lat = data.getDouble("latitude");
-                        double lng = data.getDouble("longitude");
-                        double speed = data.optDouble("speed", 0.0);
-                        double heading = data.optDouble("heading", 0.0);
-
-                        new Handler(Looper.getMainLooper()).post(() -> 
-                            updateBusLocation(new GeoPoint(lat, lng), (float) speed, (float) heading)
-                        );
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
-            });
-
-            mSocket.on("trip:started", args -> {
-                new Handler(Looper.getMainLooper()).post(() -> updateStatus("active"));
-            });
-
-            mSocket.on("trip:ended", args -> {
-                new Handler(Looper.getMainLooper()).post(() -> updateStatus("inactive"));
-            });
-
-            mSocket.on("bus:offline", args -> {
-                new Handler(Looper.getMainLooper()).post(() -> updateStatus("inactive"));
+                runOnUiThread(() -> {
+                    try {
+                        if (data.getString("busId").equals(busId)) {
+                            double lat = data.getDouble("latitude");
+                            double lng = data.getDouble("longitude");
+                            updateBusLocation(new LatLng(lat, lng));
+                        }
+                    } catch (JSONException e) { e.printStackTrace(); }
+                });
             });
 
             mSocket.connect();
         } catch (URISyntaxException e) { e.printStackTrace(); }
     }
 
-    private void updateBusLocation(GeoPoint point, float speed, float heading) {
-        busMarker.setPosition(point);
-        busMarker.setRotation(heading); // Rotate marker to match direction
-        map.getController().animateTo(point);
-        tvLiveStatus.setText("LIVE");
-        tvLiveStatus.setBackgroundColor(ContextCompat.getColor(this, R.color.success_green));
-        tvLiveStatus.setTextColor(Color.WHITE);
-
-        // Convert speed from m/s to km/h
-        int speedKmH = (int) (speed * 3.6);
-        tvSpeed.setText(speedKmH + " km/h");
-
-        // Keeping mocked ETA and Distance for now as per requirement
-        tvDistance.setText("1.8 km");
-        tvETA.setText("08:35 AM");
-    }
-
-    private void updateStatus(String status) {
-        if ("active".equalsIgnoreCase(status)) {
-            tvLiveStatus.setText("LIVE");
-            tvLiveStatus.setBackgroundColor(ContextCompat.getColor(this, R.color.success_green));
+    private void updateBusLocation(LatLng pos) {
+        if (mMap == null) return;
+        if (busMarker == null) {
+            busMarker = mMap.addMarker(new MarkerOptions()
+                    .position(pos)
+                    .title("Live Bus")
+                    .icon(BitmapDescriptorFactory.fromResource(android.R.drawable.ic_menu_directions)));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 15f));
         } else {
-            tvLiveStatus.setText("OFFLINE");
-            tvLiveStatus.setBackgroundColor(Color.GRAY);
+            busMarker.setPosition(pos);
         }
     }
 
+    private void drawRoute(List<Stop> stops) {
+        if (mMap == null || stops == null || stops.isEmpty()) return;
+
+        PolylineOptions polyOptions = new PolylineOptions()
+                .color(Color.parseColor("#3F51B5"))
+                .width(12f)
+                .geodesic(true);
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        for (int i = 0; i < stops.size(); i++) {
+            Stop stop = stops.get(i);
+            LatLng pos = new LatLng(stop.getLatitude(), stop.getLongitude());
+            polyOptions.add(pos);
+            builder.include(pos);
+
+            // Added scheduled time (ETA) to the marker snippet
+            mMap.addMarker(new MarkerOptions()
+                    .position(pos)
+                    .title((i + 1) + ". " + stop.getName())
+                    .snippet("Scheduled Arrival: " + stop.getEta())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        }
+
+        if (routePolyline != null) routePolyline.remove();
+        routePolyline = mMap.addPolyline(polyOptions);
+        
+        // Adjust camera to fit the whole route
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 150));
+    }
+
     @Override
-    protected void onResume() { super.onResume(); map.onResume(); }
-    @Override
-    protected void onPause() { super.onPause(); map.onPause(); }
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mSocket != null) mSocket.disconnect();
+        if (mSocket != null) {
+            mSocket.disconnect();
+            mSocket.off();
+        }
     }
 }

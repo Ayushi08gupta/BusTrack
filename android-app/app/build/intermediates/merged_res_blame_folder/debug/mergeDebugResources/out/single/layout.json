@@ -1,30 +1,118 @@
 [
     {
-        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/activity_register.xml",
-        "source": "com.college.bustrack.app-main-36:/layout/activity_register.xml"
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_track_bus.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_track_bus.xml"
     },
     {
-        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/activity_student_dashboard.xml",
-        "source": "com.college.bustrack.app-main-36:/layout/activity_student_dashboard.xml"
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_assignment.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_assignment.xml"
     },
     {
-        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/activity_admin_dashboard.xml",
-        "source": "com.college.bustrack.app-main-36:/layout/activity_admin_dashboard.xml"
+        "merged": "com.college.bustrack.app-mergeDebugResources-42:/layout/activity_bus_assignment.xml",
+        "source": "com.college.bustrack.app-main-45:/layout/activity_bus_assignment.xml"
     },
     {
-        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/dialog_forgot_password.xml",
-        "source": "com.college.bustrack.app-main-36:/layout/dialog_forgot_password.xml"
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\fragment_users.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\fragment_users.xml"
     },
     {
-        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/activity_driver_dashboard.xml",
-        "source": "com.college.bustrack.app-main-36:/layout/activity_driver_dashboard.xml"
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\dialog_complaint_action.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\dialog_complaint_action.xml"
     },
     {
-        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/activity_login.xml",
-        "source": "com.college.bustrack.app-main-36:/layout/activity_login.xml"
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\dialog_add_bus_simple.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\dialog_add_bus_simple.xml"
     },
     {
-        "merged": "com.college.bustrack.app-mergeDebugResources-33:/layout/item_user.xml",
-        "source": "com.college.bustrack.app-main-36:/layout/item_user.xml"
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_user.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_admin_dashboard.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_admin_dashboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\nav_header_admin.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\nav_header_admin.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\dialog_assign_bus.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\dialog_assign_bus.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_driver_dashboard.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_driver_dashboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_user_management.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_user_management.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_complaint.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_complaint.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\dialog_add_user.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\dialog_add_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\fragment_complaints.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\fragment_complaints.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_bus_assignment.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_bus_assignment.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\fragment_routes.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\fragment_routes.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\fragment_buses.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\fragment_buses.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_bus_management.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_bus_management.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_assignment_stop.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_assignment_stop.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_student_dashboard.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_student_dashboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_timeline_stop.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_timeline_stop.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\dialog_forgot_password.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\dialog_forgot_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_login.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_route_management.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_route_management.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_report_issue.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_report_issue.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\item_selected_stop.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_selected_stop.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\activity_register.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_register.xml"
+    },
+    {
+        "merged": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-mergeDebugResources-42:\\layout\\fragment_fleet_map.xml",
+        "source": "C:\\Users\\ayush\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\fragment_fleet_map.xml"
     }
 ]

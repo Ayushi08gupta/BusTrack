@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="issue_types">
+        <item>Driver Behavior</item>
+        <item>Safety Concern</item>
+        <item>Vehicle Issue</item>
+        <item>Delay</item>
+        <item>Other</item>
+    </string-array>
     <color name="accent">#6EE7B7</color>
     <color name="accent_dark">#5EDBA0</color>
     <color name="background">#F8FAFC</color>
@@ -27,6 +34,9 @@
     <color name="warning">#F97316</color>
     <color name="white">#FFFFFF</color>
     <string name="app_name">BusTrack</string>
+    <string name="google_maps_key" translatable="false">AIzaSyDLfBswAXGAESvSD5DKK5LoFQXYhdozHa8</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
     <style name="Theme.BusTrack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         
         <item name="colorPrimary">@color/primary</item>

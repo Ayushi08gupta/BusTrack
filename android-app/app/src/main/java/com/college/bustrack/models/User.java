@@ -13,6 +13,9 @@ public class User {
     private boolean isFirstLogin;
     private String assignedBusId;
     private boolean isActive;
+    
+    // For UI selection in bulk operations
+    private transient boolean selected;
 
     // Getters and Setters
     public String getId() { return id; }
@@ -41,4 +44,7 @@ public class User {
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
+
+    public boolean isSelected() { return selected; }
+    public void setSelected(boolean selected) { this.selected = selected; }
 }

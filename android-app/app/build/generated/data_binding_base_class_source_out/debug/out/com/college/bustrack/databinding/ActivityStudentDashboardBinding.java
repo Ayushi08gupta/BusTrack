@@ -17,7 +17,6 @@ import com.google.android.material.card.MaterialCardView;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
-import org.osmdroid.views.MapView;
 
 public final class ActivityStudentDashboardBinding implements ViewBinding {
   @NonNull
@@ -34,9 +33,6 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
 
   @NonNull
   public final EditText etBusSearch;
-
-  @NonNull
-  public final MapView mapView;
 
   @NonNull
   public final MaterialCardView searchCard;
@@ -67,7 +63,7 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
 
   private ActivityStudentDashboardBinding(@NonNull CoordinatorLayout rootView,
       @NonNull MaterialCardView bottomSheet, @NonNull ImageButton btnLogout,
-      @NonNull ImageButton btnSearch, @NonNull EditText etBusSearch, @NonNull MapView mapView,
+      @NonNull ImageButton btnSearch, @NonNull EditText etBusSearch,
       @NonNull MaterialCardView searchCard, @NonNull MaterialCardView topBar,
       @NonNull TextView tvBusNo, @NonNull TextView tvETA, @NonNull TextView tvLiveStatus,
       @NonNull TextView tvNextStop, @NonNull TextView tvRoute, @NonNull TextView tvStatusTag,
@@ -77,7 +73,6 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
     this.btnLogout = btnLogout;
     this.btnSearch = btnSearch;
     this.etBusSearch = etBusSearch;
-    this.mapView = mapView;
     this.searchCard = searchCard;
     this.topBar = topBar;
     this.tvBusNo = tvBusNo;
@@ -140,12 +135,6 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.mapView;
-      MapView mapView = ViewBindings.findChildViewById(rootView, id);
-      if (mapView == null) {
-        break missingId;
-      }
-
       id = R.id.searchCard;
       MaterialCardView searchCard = ViewBindings.findChildViewById(rootView, id);
       if (searchCard == null) {
@@ -201,8 +190,8 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
       }
 
       return new ActivityStudentDashboardBinding((CoordinatorLayout) rootView, bottomSheet,
-          btnLogout, btnSearch, etBusSearch, mapView, searchCard, topBar, tvBusNo, tvETA,
-          tvLiveStatus, tvNextStop, tvRoute, tvStatusTag, tvStudentName);
+          btnLogout, btnSearch, etBusSearch, searchCard, topBar, tvBusNo, tvETA, tvLiveStatus,
+          tvNextStop, tvRoute, tvStatusTag, tvStudentName);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

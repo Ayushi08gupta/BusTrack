@@ -1,8 +1,10 @@
 package com.college.bustrack;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -10,24 +12,28 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.college.bustrack.api.ApiClient;
 import com.college.bustrack.api.ApiService;
 import com.college.bustrack.models.Bus;
-import com.college.bustrack.models.Route;
 import com.college.bustrack.models.Stop;
 import com.college.bustrack.utils.SessionManager;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Polyline;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -39,9 +45,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StudentDashboardActivity extends AppCompatActivity {
+public class StudentDashboardActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private MapView map;
+    private GoogleMap mMap;
     private Marker busMarker;
     private Polyline routePolyline;
     private List<Marker> stopMarkers = new ArrayList<>();
@@ -59,14 +65,18 @@ public class StudentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         setContentView(R.layout.activity_student_dashboard);
 
         sessionManager = new SessionManager(this);
         apiService = ApiClient.getApiService();
         initViews();
-        setupMap();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+
         setupSocket();
 
         // Auto-load assigned bus if exists
@@ -83,7 +93,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
         etBusSearch = findViewById(R.id.etBusSearch);
         btnSearch = findViewById(R.id.btnSearch);
         btnLogout = findViewById(R.id.btnLogout);
-        map = findViewById(R.id.mapView);
 
         if (sessionManager.getUserName() != null) {
             tvStudentName.setText("Welcome, " + sessionManager.getUserName());
@@ -100,25 +109,17 @@ public class StudentDashboardActivity extends AppCompatActivity {
 
         btnLogout.setOnClickListener(v -> {
             sessionManager.logout();
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
     }
 
-    private void setupMap() {
-        map.setMultiTouchControls(true);
-        map.getController().setZoom(15.0);
-        map.getController().setCenter(new GeoPoint(23.2599, 77.4126)); // Default center (Bhopal/India example)
-
-        busMarker = new Marker(map);
-        busMarker.setTitle("Live Bus");
-        busMarker.setIcon(ContextCompat.getDrawable(this, android.R.drawable.ic_menu_directions));
-        busMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(busMarker);
-
-        routePolyline = new Polyline();
-        routePolyline.getOutlinePaint().setColor(Color.BLUE);
-        routePolyline.getOutlinePaint().setStrokeWidth(8f);
-        map.getOverlays().add(routePolyline);
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        LatLng defaultCenter = new LatLng(23.2599, 77.4126); // Bhopal
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultCenter, 13f));
     }
 
     private void performSearch() {
@@ -127,7 +128,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
 
         apiService.searchBuses(sessionManager.getToken(), query).enqueue(new Callback<List<Bus>>() {
             @Override
-            public void onResponse(Call<List<Bus>> call, Response<List<Bus>> response) {
+            public void onResponse(@NonNull Call<List<Bus>> call, @NonNull Response<List<Bus>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     showBusSelectionDialog(response.body());
                 } else {
@@ -136,7 +137,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Bus>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Bus>> call, @NonNull Throwable t) {
                 Toast.makeText(StudentDashboardActivity.this, "Search failed", Toast.LENGTH_SHORT).show();
             }
         });
@@ -162,13 +163,13 @@ public class StudentDashboardActivity extends AppCompatActivity {
     private void fetchAssignedBus() {
         apiService.getStudentBusInfo(sessionManager.getToken()).enqueue(new Callback<Bus>() {
             @Override
-            public void onResponse(Call<Bus> call, Response<Bus> response) {
+            public void onResponse(@NonNull Call<Bus> call, @NonNull Response<Bus> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     startTrackingBus(response.body());
                 }
             }
             @Override
-            public void onFailure(Call<Bus> call, Throwable t) {}
+            public void onFailure(@NonNull Call<Bus> call, @NonNull Throwable t) {}
         });
     }
 
@@ -195,8 +196,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
         }
 
         // If bus already has a location, show it
-        if (bus.getCurrentLocation() != null) {
-            updateBusLocation(new GeoPoint(
+        if (bus.getCurrentLocation() != null && mMap != null) {
+            updateBusLocation(new LatLng(
                 bus.getCurrentLocation().getLatitude(), 
                 bus.getCurrentLocation().getLongitude()
             ));
@@ -204,28 +205,33 @@ public class StudentDashboardActivity extends AppCompatActivity {
     }
 
     private void drawRoute(List<Stop> stops) {
-        // Clear old stop markers
-        for (Marker m : stopMarkers) map.getOverlays().remove(m);
-        stopMarkers.clear();
+        if (mMap == null || stops == null) return;
 
-        List<GeoPoint> points = new ArrayList<>();
+        // Clear old stop markers
+        for (Marker m : stopMarkers) m.remove();
+        stopMarkers.clear();
+        if (routePolyline != null) routePolyline.remove();
+
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .color(Color.BLUE)
+                .width(8f);
+
         for (Stop stop : stops) {
-            GeoPoint gp = new GeoPoint(stop.getLatitude(), stop.getLongitude());
-            points.add(gp);
+            LatLng pos = new LatLng(stop.getLatitude(), stop.getLongitude());
+            polylineOptions.add(pos);
             
-            Marker stopMarker = new Marker(map);
-            stopMarker.setPosition(gp);
-            stopMarker.setTitle(stop.getName());
-            stopMarker.setIcon(ContextCompat.getDrawable(this, android.R.drawable.presence_online));
-            stopMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-            map.getOverlays().add(stopMarker);
-            stopMarkers.add(stopMarker);
+            Marker stopMarker = mMap.addMarker(new MarkerOptions()
+                    .position(pos)
+                    .title(stop.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            if (stopMarker != null) stopMarkers.add(stopMarker);
         }
-        routePolyline.setPoints(points);
-        if (!points.isEmpty()) {
-            map.getController().animateTo(points.get(0));
+        routePolyline = mMap.addPolyline(polylineOptions);
+        
+        if (!stops.isEmpty()) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(stops.get(0).getLatitude(), stops.get(0).getLongitude()), 14f));
         }
-        map.invalidate();
     }
 
     private void setupSocket() {
@@ -242,7 +248,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
                     if (busId.equals(selectedBusId)) {
                         double lat = data.getDouble("latitude");
                         double lng = data.getDouble("longitude");
-                        runOnUiThread(() -> updateBusLocation(new GeoPoint(lat, lng)));
+                        runOnUiThread(() -> updateBusLocation(new LatLng(lat, lng)));
                     }
                 } catch (JSONException e) {
                     Log.e("Socket", "Error parsing location", e);
@@ -269,13 +275,20 @@ public class StudentDashboardActivity extends AppCompatActivity {
         }
     }
 
-    private void updateBusLocation(GeoPoint point) {
-        if (point == null || (point.getLatitude() == 0 && point.getLongitude() == 0)) return;
-        busMarker.setPosition(point);
-        busMarker.setVisible(true);
-        map.getController().animateTo(point);
+    private void updateBusLocation(LatLng point) {
+        if (mMap == null || point == null || (point.latitude == 0 && point.longitude == 0)) return;
+        
+        if (busMarker == null) {
+            busMarker = mMap.addMarker(new MarkerOptions()
+                    .position(point)
+                    .title("Live Bus")
+                    .icon(BitmapDescriptorFactory.fromResource(android.R.drawable.ic_menu_directions)));
+        } else {
+            busMarker.setPosition(point);
+        }
+        
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(point));
         updateStatusTag("active");
-        map.invalidate();
     }
 
     private void updateStatusTag(String status) {
@@ -286,18 +299,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
             tvStatusTag.setText("OFFLINE");
             tvStatusTag.setBackgroundColor(Color.parseColor("#718096"));
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        map.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        map.onPause();
     }
 
     @Override

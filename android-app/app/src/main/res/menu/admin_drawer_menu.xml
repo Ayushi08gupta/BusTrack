@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_fleet_map"
+            android:icon="@android:drawable/ic_dialog_map"
+            android:title="Fleet Live Map" />
+        <item
+            android:id="@+id/nav_users"
+            android:icon="@android:drawable/ic_menu_myplaces"
+            android:title="Users" />
+        <item
+            android:id="@+id/nav_routes"
+            android:icon="@android:drawable/ic_menu_directions"
+            android:title="Active Routes" />
+        <item
+            android:id="@+id/nav_complaints"
+            android:icon="@android:drawable/ic_menu_help"
+            android:title="Complaints &amp; Actions" />
+    </group>
+
+    <item android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="Logout" />
+        </menu>
+    </item>
+</menu>

@@ -5,18 +5,32 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.college.bustrack.api.ApiClient;
+import com.college.bustrack.api.ApiService;
+import com.college.bustrack.models.Bus;
+import com.college.bustrack.models.Route;
+import com.college.bustrack.models.Stop;
+import com.college.bustrack.utils.SessionManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,12 +40,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.college.bustrack.api.ApiClient;
-import com.college.bustrack.api.ApiService;
-import com.college.bustrack.models.Bus;
-import com.college.bustrack.models.Route;
-import com.college.bustrack.models.Stop;
-import com.college.bustrack.utils.SessionManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +59,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StudentDashboardActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class StudentDashboardActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private com.google.android.gms.maps.MapView map;
     private GoogleMap googleMap;
@@ -58,10 +71,23 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
     private SessionManager sessionManager;
     private ApiService apiService;
     
-    private TextView tvStudentName, tvBusNo, tvRoute, tvETA, tvNextStop, tvStatusTag;
-    private EditText etBusSearch;
-    private ImageButton btnLogout, btnSearch;
+    // Main UI Components
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private BottomNavigationView bottomNav;
+    private Toolbar toolbar;
+    private FrameLayout homeContainer, busesContainer, trackContainer, profileContainer;
+    private BottomSheetBehavior<View> bottomSheetBehavior;
+    private MaterialCardView bottomSheet, bottomNavCard;
 
+    // View Components
+    private TextView tvBusNo, tvRoute, tvETA, tvNextStop, tvStatusTag, tvSpeed, tvDriverName;
+    private TextView tvFloatingBusNo, tvFloatingStatus;
+    private EditText etHomeSearch, etBusSearch, etBusListSearch;
+    private ImageView btnSearch, btnBackFromTrack, ivToolbarProfile;
+    
+    private BusAdapter nearbyBusAdapter, allBusAdapter;
+    private List<Bus> allBuses = new ArrayList<>();
     private String selectedBusId;
 
     @Override
@@ -71,42 +97,256 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
 
         sessionManager = new SessionManager(this);
         apiService = ApiClient.getApiService();
+        
         initViews();
+        setupNavigation();
+        setupDrawer();
+        
         map.onCreate(savedInstanceState);
         map.getMapAsync(this);
 
-        // Auto-load assigned bus if exists
         fetchAssignedBus();
+        loadAllBuses();
     }
 
     private void initViews() {
-        tvStudentName = findViewById(R.id.tvStudentName);
+        // Core Layouts
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+        bottomNav = findViewById(R.id.bottomNav);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        
+        homeContainer = findViewById(R.id.homeContainer);
+        busesContainer = findViewById(R.id.busesContainer);
+        trackContainer = findViewById(R.id.trackContainer);
+        profileContainer = findViewById(R.id.profileContainer);
+        bottomNavCard = findViewById(R.id.bottomNavCard);
+
+        // Tracking Screen (Within trackContainer)
+        map = findViewById(R.id.mapView);
+        bottomSheet = findViewById(R.id.bottomSheet);
         tvBusNo = findViewById(R.id.tvBusNo);
         tvRoute = findViewById(R.id.tvRoute);
         tvETA = findViewById(R.id.tvETA);
         tvNextStop = findViewById(R.id.tvNextStop);
         tvStatusTag = findViewById(R.id.tvStatusTag);
+        tvSpeed = findViewById(R.id.tvSpeed);
+        tvDriverName = findViewById(R.id.tvDriverName);
+        tvFloatingBusNo = findViewById(R.id.tvFloatingBusNo);
+        tvFloatingStatus = findViewById(R.id.tvFloatingStatus);
+        
         etBusSearch = findViewById(R.id.etBusSearch);
         btnSearch = findViewById(R.id.btnSearch);
-        btnLogout = findViewById(R.id.btnLogout);
-        map = findViewById(R.id.mapView);
+        btnBackFromTrack = findViewById(R.id.btnBackFromTrack);
+        
+        // Home Screen Views
+        etHomeSearch = homeContainer.findViewById(R.id.etHomeSearch);
+        ivToolbarProfile = findViewById(R.id.ivToolbarProfile);
+        
+        // Quick Action Buttons
+        View btnQuickTrack = homeContainer.findViewById(R.id.btnQuickTrack);
+        View btnQuickRoutes = homeContainer.findViewById(R.id.btnQuickRoutes);
+        View btnQuickSchedule = homeContainer.findViewById(R.id.btnQuickSchedule);
 
-        if (sessionManager.getUserName() != null) {
-            tvStudentName.setText("Welcome, " + sessionManager.getUserName());
-        }
+        if (btnQuickTrack != null) btnQuickTrack.setOnClickListener(v -> showState("track"));
+        if (btnQuickRoutes != null) btnQuickRoutes.setOnClickListener(v -> showState("buses"));
+        if (btnQuickSchedule != null) btnQuickSchedule.setOnClickListener(v -> 
+            Toast.makeText(this, "Schedule coming soon", Toast.LENGTH_SHORT).show());
 
-        btnSearch.setOnClickListener(v -> performSearch());
-        etBusSearch.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                performSearch();
-                return true;
+        if (ivToolbarProfile != null) ivToolbarProfile.setOnClickListener(v -> showState("profile"));
+
+        // Bottom Sheet Initialization
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        // Search Handlers
+        if (btnSearch != null) btnSearch.setOnClickListener(v -> performSearch(etBusSearch.getText().toString()));
+        if (btnBackFromTrack != null) btnBackFromTrack.setOnClickListener(v -> showState("home"));
+
+        setupAdapters();
+        setupSearchActions();
+    }
+
+    private void setupDrawer() {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+            this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+        
+        // Update Drawer Header
+        View header = navigationView.getHeaderView(0);
+        TextView tvName = header.findViewById(R.id.tvDrawerName);
+        TextView tvEmail = header.findViewById(R.id.tvDrawerEmail);
+        
+        if (sessionManager.getUserName() != null) tvName.setText(sessionManager.getUserName());
+        if (sessionManager.getUserEmail() != null) tvEmail.setText(sessionManager.getUserEmail());
+    }
+
+    private void setupNavigation() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                showState("home");
+            } else if (id == R.id.nav_buses) {
+                showState("buses");
+            } else if (id == R.id.nav_track) {
+                if (selectedBusId != null) {
+                    showState("track");
+                } else {
+                    Toast.makeText(this, "Select a bus to track first", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            } else if (id == R.id.nav_profile) {
+                showState("profile");
             }
-            return false;
+            return true;
         });
+    }
 
-        btnLogout.setOnClickListener(v -> {
-            sessionManager.logout();
-            finish();
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.nav_home) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        } else if (id == R.id.nav_my_bus) {
+            fetchAssignedBus();
+        } else if (id == R.id.nav_buses) {
+            bottomNav.setSelectedItemId(R.id.nav_buses);
+        } else if (id == R.id.nav_track) {
+            bottomNav.setSelectedItemId(R.id.nav_track);
+        } else if (id == R.id.nav_profile) {
+            bottomNav.setSelectedItemId(R.id.nav_profile);
+        } else if (id == R.id.nav_logout) {
+            logout();
+        }
+        
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void showState(String state) {
+        homeContainer.setVisibility(View.GONE);
+        busesContainer.setVisibility(View.GONE);
+        trackContainer.setVisibility(View.GONE);
+        profileContainer.setVisibility(View.GONE);
+        bottomNavCard.setVisibility(View.VISIBLE);
+
+        switch (state) {
+            case "home":
+                homeContainer.setVisibility(View.VISIBLE);
+                if (getSupportActionBar() != null) getSupportActionBar().setTitle("BusTrack");
+                break;
+            case "buses":
+                busesContainer.setVisibility(View.VISIBLE);
+                if (getSupportActionBar() != null) getSupportActionBar().setTitle("Available Buses");
+                break;
+            case "track":
+                trackContainer.setVisibility(View.VISIBLE);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                if (getSupportActionBar() != null) getSupportActionBar().setTitle("Tracking Bus");
+                break;
+            case "profile":
+                profileContainer.setVisibility(View.VISIBLE);
+                setupProfileData();
+                if (getSupportActionBar() != null) getSupportActionBar().setTitle("Student Profile");
+                break;
+        }
+    }
+
+    private void setupProfileData() {
+        TextView tvName = profileContainer.findViewById(R.id.tvProfileName);
+        TextView tvId = profileContainer.findViewById(R.id.tvProfileId);
+        
+        tvName.setText(sessionManager.getUserName() != null ? sessionManager.getUserName() : "Student");
+        tvId.setText("ID: " + (sessionManager.getUserId() != null ? sessionManager.getUserId() : "N/A"));
+
+        // Setup individual info items using layout includes
+        updateProfileInfo(R.id.infoEmail, "Email", sessionManager.getUserEmail(), android.R.drawable.ic_dialog_email);
+        updateProfileInfo(R.id.infoDept, "Department", "Computer Science", android.R.drawable.ic_menu_info_details);
+        updateProfileInfo(R.id.infoSemester, "Semester", "6th Semester", android.R.drawable.ic_menu_today);
+        
+        profileContainer.findViewById(R.id.btnLogoutProfile).setOnClickListener(v -> logout());
+    }
+
+    private void updateProfileInfo(int includeId, String label, String value, int iconRes) {
+        View view = profileContainer.findViewById(includeId);
+        if (view == null) return;
+        ((TextView) view.findViewById(R.id.tvLabel)).setText(label);
+        ((TextView) view.findViewById(R.id.tvValue)).setText(value != null ? value : "Not specified");
+        ((ImageView) view.findViewById(R.id.ivIcon)).setImageResource(iconRes);
+    }
+
+    private void setupSearchActions() {
+        if (etHomeSearch != null) {
+            etHomeSearch.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    performSearch(etHomeSearch.getText().toString());
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+    private void setupAdapters() {
+        RecyclerView rvNearby = findViewById(R.id.rvNearbyBuses);
+        RecyclerView rvAll = findViewById(R.id.rvAllBuses);
+
+        nearbyBusAdapter = new BusAdapter(new ArrayList<>(), this::startTrackingBus);
+        allBusAdapter = new BusAdapter(new ArrayList<>(), this::startTrackingBus);
+
+        if (rvNearby != null) {
+            rvNearby.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+            rvNearby.setAdapter(nearbyBusAdapter);
+        }
+        if (rvAll != null) {
+            rvAll.setLayoutManager(new LinearLayoutManager(this));
+            rvAll.setAdapter(allBusAdapter);
+        }
+    }
+
+    private void loadAllBuses() {
+        apiService.searchBuses(sessionManager.getToken(), "").enqueue(new Callback<List<Bus>>() {
+            @Override
+            public void onResponse(Call<List<Bus>> call, Response<List<Bus>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    allBuses = response.body();
+                    allBusAdapter.updateBuses(allBuses);
+                    
+                    View emptyState = busesContainer.findViewById(R.id.emptyState);
+                    if (emptyState != null) {
+                        emptyState.setVisibility(allBuses.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
+
+                    List<Bus> activeBuses = new ArrayList<>();
+                    for (Bus b : allBuses) {
+                        if ("active".equalsIgnoreCase(b.getStatus())) activeBuses.add(b);
+                    }
+                    nearbyBusAdapter.updateBuses(activeBuses);
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Bus>> call, Throwable t) {}
+        });
+    }
+
+    private void performSearch(String query) {
+        if (query == null || query.trim().isEmpty()) return;
+        apiService.searchBuses(sessionManager.getToken(), query).enqueue(new Callback<List<Bus>>() {
+            @Override
+            public void onResponse(Call<List<Bus>> call, Response<List<Bus>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    showBusSelectionDialog(response.body());
+                } else {
+                    Toast.makeText(StudentDashboardActivity.this, "No buses found", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Bus>> call, Throwable t) {
+                Toast.makeText(StudentDashboardActivity.this, "Search failed", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -121,45 +361,18 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
         if (googleMap == null) return;
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.2599, 77.4126), 15f));
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             googleMap.setMyLocationEnabled(true);
         }
     }
 
-    private void performSearch() {
-        String query = etBusSearch.getText().toString().trim();
-        if (query.isEmpty()) return;
-
-        apiService.searchBuses(sessionManager.getToken(), query).enqueue(new Callback<List<Bus>>() {
-            @Override
-            public void onResponse(Call<List<Bus>> call, Response<List<Bus>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    showBusSelectionDialog(response.body());
-                } else {
-                    Toast.makeText(StudentDashboardActivity.this, "No buses found for this route", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Bus>> call, Throwable t) {
-                Toast.makeText(StudentDashboardActivity.this, "Search failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private void showBusSelectionDialog(List<Bus> buses) {
-        if (buses.isEmpty()) {
-            Toast.makeText(this, "No buses available on this route", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        if (buses.isEmpty()) return;
         String[] busNames = new String[buses.size()];
         for (int i = 0; i < buses.size(); i++) {
             busNames[i] = "Bus " + buses.get(i).getBusNumber() + " (" + buses.get(i).getRouteId().getRouteName() + ")";
         }
-
-        new AlertDialog.Builder(this)
+        new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Select a Bus to Track")
                 .setItems(busNames, (dialog, which) -> startTrackingBus(buses.get(which)))
                 .show();
@@ -170,7 +383,8 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
             @Override
             public void onResponse(Call<Bus> call, Response<Bus> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    startTrackingBus(response.body());
+                    Bus bus = response.body();
+                    updateAssignedBusCard(bus);
                 }
             }
             @Override
@@ -178,57 +392,55 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
         });
     }
 
-    private void startTrackingBus(Bus bus) {
-        // Leave old room if any
-        if (selectedBusId != null && mSocket != null) {
-            mSocket.emit("leave:bus", selectedBusId);
-        }
-
-        selectedBusId = bus.getId();
-        tvBusNo.setText("Bus: " + bus.getBusNumber());
+    private void updateAssignedBusCard(Bus bus) {
+        View card = homeContainer.findViewById(R.id.assignedBusCard);
+        if (card == null || bus == null) return;
         
+        ((TextView) card.findViewById(R.id.tvBusNumber)).setText(bus.getBusNumber());
+        if (bus.getRouteId() != null) ((TextView) card.findViewById(R.id.tvRoutePath)).setText(bus.getRouteId().getRouteName());
+        
+        boolean isActive = "active".equalsIgnoreCase(bus.getStatus());
+        TextView tvStatus = card.findViewById(R.id.tvStatus);
+        tvStatus.setText(isActive ? "ONLINE" : "OFFLINE");
+        
+        card.findViewById(R.id.btnTrackNow).setOnClickListener(v -> startTrackingBus(bus));
+        
+        // Update profile transport info if profile is visible
+        updateProfileInfo(R.id.infoAssignedBus, "Assigned Bus", bus.getBusNumber(), android.R.drawable.ic_menu_directions);
+        if (bus.getRouteId() != null)
+            updateProfileInfo(R.id.infoAssignedRoute, "Assigned Route", bus.getRouteId().getRouteName(), android.R.drawable.ic_menu_directions);
+    }
+
+    private void startTrackingBus(Bus bus) {
+        if (bus == null) return;
+        showState("track");
+        bottomNav.getMenu().findItem(R.id.nav_track).setChecked(true);
+        selectedBusId = bus.getId();
+        tvBusNo.setText(bus.getBusNumber());
+        tvFloatingBusNo.setText(bus.getBusNumber());
         if (bus.getRouteId() != null) {
             tvRoute.setText(bus.getRouteId().getRouteName());
             drawRoute(bus.getRouteId().getStops());
         }
-
-        // Update Status
+        tvDriverName.setText(bus.getDriverId() != null ? bus.getDriverId().getName() : "N/A");
         updateStatusTag(bus.getStatus());
-
-        // Join socket room for real-time updates
-        if (mSocket != null && mSocket.connected()) {
-            joinBusRoom();
-        }
-
-        // If bus already has a location, show it
+        if (mSocket != null && mSocket.connected()) joinBusRoom();
         if (bus.getCurrentLocation() != null) {
-            updateBusLocation(new LatLng(
-                bus.getCurrentLocation().getLatitude(), 
-                bus.getCurrentLocation().getLongitude()
-            ));
+            updateBusLocation(new LatLng(bus.getCurrentLocation().getLatitude(), bus.getCurrentLocation().getLongitude()));
         }
     }
 
     private void drawRoute(List<Stop> stops) {
         if (googleMap == null || stops == null) return;
-        
-        // Clear old stop markers
         for (Marker m : stopMarkers) m.remove();
         stopMarkers.clear();
-
         if (routePolyline != null) routePolyline.remove();
-
-        PolylineOptions polylineOptions = new PolylineOptions()
-                .color(Color.BLUE)
-                .width(8f);
-
+        PolylineOptions polylineOptions = new PolylineOptions().color(ContextCompat.getColor(this, R.color.primary)).width(10f);
         for (Stop stop : stops) {
             LatLng latLng = new LatLng(stop.getLatitude(), stop.getLongitude());
             polylineOptions.add(latLng);
-            
             Marker stopMarker = googleMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title(stop.getName())
+                    .position(latLng).title(stop.getName())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             if (stopMarker != null) stopMarkers.add(stopMarker);
         }
@@ -241,7 +453,6 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
             mSocket.on(Socket.EVENT_CONNECT, args -> runOnUiThread(() -> {
                 if (selectedBusId != null) joinBusRoom();
             }));
-
             mSocket.on("location:update", args -> {
                 JSONObject data = (JSONObject) args[0];
                 try {
@@ -251,19 +462,11 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
                         double lng = data.getDouble("longitude");
                         runOnUiThread(() -> updateBusLocation(new LatLng(lat, lng)));
                     }
-                } catch (JSONException e) {
-                    Log.e("Socket", "Error parsing location", e);
-                }
+                } catch (JSONException e) { Log.e("Socket", "Error parsing location", e); }
             });
-
-            mSocket.on("bus:offline", args -> {
-                runOnUiThread(() -> updateStatusTag("inactive"));
-            });
-
+            mSocket.on("bus:offline", args -> runOnUiThread(() -> updateStatusTag("inactive")));
             mSocket.connect();
-        } catch (URISyntaxException e) {
-            Log.e("Socket", "URI Syntax Error", e);
-        }
+        } catch (URISyntaxException e) { Log.e("Socket", "URI Syntax Error", e); }
     }
 
     private void joinBusRoom() {
@@ -271,80 +474,48 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
             JSONObject data = new JSONObject();
             data.put("busId", selectedBusId);
             mSocket.emit("join:bus", data);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        } catch (JSONException e) { e.printStackTrace(); }
     }
 
     private void updateBusLocation(LatLng point) {
         if (googleMap == null || point == null || (point.latitude == 0 && point.longitude == 0)) return;
-        
         if (busMarker == null) {
-            busMarker = googleMap.addMarker(new MarkerOptions()
-                    .position(point)
-                    .title("Live Bus")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-        } else {
-            busMarker.setPosition(point);
-        }
-        
+            busMarker = googleMap.addMarker(new MarkerOptions().position(point).title("Live Bus")
+                    .icon(BitmapDescriptorFactory.fromResource(android.R.drawable.ic_menu_directions)));
+        } else { busMarker.setPosition(point); }
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(point));
         updateStatusTag("active");
     }
 
     private void updateStatusTag(String status) {
-        if ("active".equalsIgnoreCase(status)) {
-            tvStatusTag.setText("LIVE");
-            tvStatusTag.setBackgroundColor(Color.parseColor("#22C55E"));
-        } else {
-            tvStatusTag.setText("OFFLINE");
-            tvStatusTag.setBackgroundColor(Color.parseColor("#718096"));
-        }
+        boolean isActive = "active".equalsIgnoreCase(status);
+        tvStatusTag.setText(isActive ? "LIVE" : "OFFLINE");
+        tvFloatingStatus.setText(isActive ? "🟢 LIVE" : "⚪ OFFLINE");
+        tvFloatingStatus.setTextColor(isActive ? ContextCompat.getColor(this, R.color.success) : Color.GRAY);
+        MaterialCardView tagCard = findViewById(R.id.tagCard);
+        if (tagCard != null) tagCard.setCardBackgroundColor(isActive ? ContextCompat.getColor(this, R.color.primary_light) : Color.LTGRAY);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        map.onResume();
+    private void logout() {
+        sessionManager.logout();
+        finish();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        map.onPause();
+    @Override public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else { super.onBackPressed(); }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        map.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        map.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
+    @Override protected void onResume() { super.onResume(); map.onResume(); }
+    @Override protected void onPause() { super.onPause(); map.onPause(); }
+    @Override protected void onStart() { super.onStart(); map.onStart(); }
+    @Override protected void onStop() { super.onStop(); map.onStop(); }
+    @Override protected void onDestroy() {
         super.onDestroy();
         map.onDestroy();
-        if (mSocket != null) {
-            mSocket.disconnect();
-            mSocket.off();
-        }
+        if (mSocket != null) { mSocket.disconnect(); mSocket.off(); }
     }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        map.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        map.onLowMemory();
-    }
+    @Override protected void onSaveInstanceState(@NonNull Bundle outState) { super.onSaveInstanceState(outState); map.onSaveInstanceState(outState); }
+    @Override public void onLowMemory() { super.onLowMemory(); map.onLowMemory(); }
 }

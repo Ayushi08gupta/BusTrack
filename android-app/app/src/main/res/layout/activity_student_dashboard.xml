@@ -1,222 +1,390 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"
+    android:background="@color/background"
     tools:context=".StudentDashboardActivity">
 
-    <!-- Google Maps MapView -->
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <!-- Top Section: Search and User Info -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp">
-
-        <!-- Search Bar -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/searchCard"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp">
+            android:background="@color/white"
+            app:elevation="0dp">
 
-            <LinearLayout
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="4dp"
-                android:gravity="center_vertical">
+                android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="@android:drawable/ic_menu_sort_by_size"
+                app:title="BusTrack"
+                app:titleCentered="true"
+                app:titleTextColor="@color/text_primary">
 
-                <EditText
-                    android:id="@+id/etBusSearch"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:hint="Search route (e.g. College to Indrapuri)"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="14sp"
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"/>
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivToolbarProfile"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp"
+                    android:src="@android:drawable/ic_menu_myplaces"
+                    android:padding="2dp"
+                    app:strokeColor="@color/primary"
+                    app:strokeWidth="1dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
-                <ImageButton
-                    android:id="@+id/btnSearch"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@android:drawable/ic_menu_search"
-                    app:tint="@color/primary"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.appbar.MaterialToolbar>
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- User Info Bar -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/topBar"
+        <!-- CONTENT AREA -->
+        <FrameLayout
+            android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="#3F51B5">
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
+            <!-- HOME TAB -->
+            <FrameLayout
+                android:id="@+id/homeContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="14dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_height="match_parent">
+                <include layout="@layout/activity_home" />
+            </FrameLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
+            <!-- BUSES TAB -->
+            <FrameLayout
+                android:id="@+id/busesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+                <include layout="@layout/activity_all_buses" />
+            </FrameLayout>
+
+            <!-- PROFILE TAB -->
+            <FrameLayout
+                android:id="@+id/profileContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+                <include layout="@layout/activity_profile_content" />
+            </FrameLayout>
+
+            <!-- TRACK TAB (Map + Overlays) -->
+            <FrameLayout
+                android:id="@+id/trackContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <!-- Overlays for Track Tab -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/floatingSearchCard"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="8dp"
+                    app:strokeWidth="0dp">
 
-                    <TextView
-                        android:id="@+id/tvStudentName"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Welcome, Student 👋"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="4dp">
 
-                    <TextView
-                        android:id="@+id/tvLiveStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Live Bus Tracking"
-                        android:textColor="#E0E7FF"
-                        android:textSize="12sp"/>
-                </LinearLayout>
+                        <ImageView
+                            android:id="@+id/btnBackFromTrack"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@android:drawable/ic_menu_revert"
+                            app:tint="@color/text_primary" />
 
-                <ImageButton
-                    android:id="@+id/btnLogout"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@android:drawable/ic_lock_power_off"
-                    app:tint="@color/white"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
+                        <EditText
+                            android:id="@+id/etBusSearch"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:hint="Search another bus..."
+                            android:paddingHorizontal="16dp"
+                            android:textSize="14sp"
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"/>
 
-    <!-- Bottom Info Sheet -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/bottomSheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="12dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="@color/white">
+                        <ImageView
+                            android:id="@+id/btnSearch"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@android:drawable/ic_menu_search"
+                            app:tint="@color/primary"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="18dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvBusNo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Select a bus to track"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#1A202C"/>
-
-                <TextView
-                    android:id="@+id/tvStatusTag"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/floatingBusInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="OFFLINE"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
-                    android:background="#718096"/>
-            </LinearLayout>
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="85dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:strokeWidth="0dp">
 
-            <TextView
-                android:id="@+id/tvRoute"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Search for a route above"
-                android:textColor="#4A5568"
-                android:layout_marginTop="4dp"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp"
+                        android:gravity="center_vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="12dp"
-                android:background="#E2E8F0"/>
+                        <TextView
+                            android:id="@+id/tvFloatingBusNo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MP04BT1001"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"/>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="16dp"
+                            android:layout_marginHorizontal="12dp"
+                            android:background="@color/divider" />
+
+                        <TextView
+                            android:id="@+id/tvFloatingStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🟢 LIVE"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/success"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
+
+        </FrameLayout>
+
+        <!-- Bottom Sheet for Tracking Screen -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bottomSheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="16dp"
+            app:strokeWidth="0dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:paddingBottom="40dp">
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="4dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/divider" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ETA"
-                        android:textSize="11sp"
-                        android:textColor="#718096"/>
-                    <TextView
-                        android:id="@+id/tvETA"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#3F51B5"/>
-                </LinearLayout>
+                    android:orientation="vertical"
+                    android:paddingHorizontal="24dp"
+                    android:paddingTop="20dp">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tvBusNo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="MP04BT1001"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"/>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/tagCard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="8dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="@color/primary_light">
+                            <TextView
+                                android:id="@+id/tvStatusTag"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"
+                                android:text="LIVE"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary"/>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
                     <TextView
+                        android:id="@+id/tvRoute"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Next Stop"
-                        android:textSize="11sp"
-                        android:textColor="#718096"/>
-                    <TextView
-                        android:id="@+id/tvNextStop"
-                        android:layout_width="wrap_content"
+                        android:text="Indrapuri → LNCT College"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="4dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="20dp"
+                        android:background="@color/divider"/>
+
+                    <GridLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#1A202C"/>
+                        android:columnCount="2"
+                        android:rowCount="2">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="16dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ETA"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_muted"/>
+                            <TextView
+                                android:id="@+id/tvETA"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="15 mins"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Next Stop"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_muted"/>
+                            <TextView
+                                android:id="@+id/tvNextStop"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Kalpana Nagar"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Driver"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_muted"/>
+                            <TextView
+                                android:id="@+id/tvDriverName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Rajesh Kumar"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Speed"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_muted"/>
+                            <TextView
+                                android:id="@+id/tvSpeed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="45 km/h"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary"/>
+                        </LinearLayout>
+                    </GridLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <!-- Floating Bottom Navigation -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bottomNavCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="12dp"
+            app:strokeWidth="0dp">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNav"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:elevation="0dp"
+                app:menu="@menu/bottom_nav_menu"
+                app:labelVisibilityMode="labeled" />
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- NAVIGATION DRAWER -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/drawer_header_student"
+        app:menu="@menu/student_drawer_menu" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">BusTrack</string>
+    <string name="google_maps_key" translatable="false">AIzaSyDLfBswAXGAESvSD5DKK5LoFQXYhdozHa8</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string-array name="issue_types">
+        <item>Driver Behavior</item>
+        <item>Safety Concern</item>
+        <item>Vehicle Issue</item>
+        <item>Delay</item>
+        <item>Other</item>
+    </string-array>
 </resources>

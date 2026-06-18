@@ -5,53 +5,104 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.college.bustrack.R;
+import com.google.android.gms.maps.MapView;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.navigation.NavigationView;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
-import org.osmdroid.views.MapView;
 
 public final class ActivityStudentDashboardBinding implements ViewBinding {
   @NonNull
-  private final CoordinatorLayout rootView;
+  private final DrawerLayout rootView;
+
+  @NonNull
+  public final AppBarLayout appBarLayout;
+
+  @NonNull
+  public final BottomNavigationView bottomNav;
+
+  @NonNull
+  public final MaterialCardView bottomNavCard;
 
   @NonNull
   public final MaterialCardView bottomSheet;
 
   @NonNull
-  public final ImageButton btnLogout;
+  public final ImageView btnBackFromTrack;
 
   @NonNull
-  public final ImageButton btnSearch;
+  public final ImageView btnSearch;
+
+  @NonNull
+  public final FrameLayout busesContainer;
+
+  @NonNull
+  public final FrameLayout contentFrame;
+
+  @NonNull
+  public final DrawerLayout drawerLayout;
 
   @NonNull
   public final EditText etBusSearch;
 
   @NonNull
+  public final MaterialCardView floatingBusInfo;
+
+  @NonNull
+  public final MaterialCardView floatingSearchCard;
+
+  @NonNull
+  public final FrameLayout homeContainer;
+
+  @NonNull
+  public final ShapeableImageView ivToolbarProfile;
+
+  @NonNull
   public final MapView mapView;
 
   @NonNull
-  public final MaterialCardView searchCard;
+  public final NavigationView navigationView;
 
   @NonNull
-  public final MaterialCardView topBar;
+  public final FrameLayout profileContainer;
+
+  @NonNull
+  public final MaterialCardView tagCard;
+
+  @NonNull
+  public final MaterialToolbar toolbar;
+
+  @NonNull
+  public final FrameLayout trackContainer;
 
   @NonNull
   public final TextView tvBusNo;
 
   @NonNull
+  public final TextView tvDriverName;
+
+  @NonNull
   public final TextView tvETA;
 
   @NonNull
-  public final TextView tvLiveStatus;
+  public final TextView tvFloatingBusNo;
+
+  @NonNull
+  public final TextView tvFloatingStatus;
 
   @NonNull
   public final TextView tvNextStop;
@@ -60,38 +111,61 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
   public final TextView tvRoute;
 
   @NonNull
-  public final TextView tvStatusTag;
+  public final TextView tvSpeed;
 
   @NonNull
-  public final TextView tvStudentName;
+  public final TextView tvStatusTag;
 
-  private ActivityStudentDashboardBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull MaterialCardView bottomSheet, @NonNull ImageButton btnLogout,
-      @NonNull ImageButton btnSearch, @NonNull EditText etBusSearch, @NonNull MapView mapView,
-      @NonNull MaterialCardView searchCard, @NonNull MaterialCardView topBar,
-      @NonNull TextView tvBusNo, @NonNull TextView tvETA, @NonNull TextView tvLiveStatus,
-      @NonNull TextView tvNextStop, @NonNull TextView tvRoute, @NonNull TextView tvStatusTag,
-      @NonNull TextView tvStudentName) {
+  private ActivityStudentDashboardBinding(@NonNull DrawerLayout rootView,
+      @NonNull AppBarLayout appBarLayout, @NonNull BottomNavigationView bottomNav,
+      @NonNull MaterialCardView bottomNavCard, @NonNull MaterialCardView bottomSheet,
+      @NonNull ImageView btnBackFromTrack, @NonNull ImageView btnSearch,
+      @NonNull FrameLayout busesContainer, @NonNull FrameLayout contentFrame,
+      @NonNull DrawerLayout drawerLayout, @NonNull EditText etBusSearch,
+      @NonNull MaterialCardView floatingBusInfo, @NonNull MaterialCardView floatingSearchCard,
+      @NonNull FrameLayout homeContainer, @NonNull ShapeableImageView ivToolbarProfile,
+      @NonNull MapView mapView, @NonNull NavigationView navigationView,
+      @NonNull FrameLayout profileContainer, @NonNull MaterialCardView tagCard,
+      @NonNull MaterialToolbar toolbar, @NonNull FrameLayout trackContainer,
+      @NonNull TextView tvBusNo, @NonNull TextView tvDriverName, @NonNull TextView tvETA,
+      @NonNull TextView tvFloatingBusNo, @NonNull TextView tvFloatingStatus,
+      @NonNull TextView tvNextStop, @NonNull TextView tvRoute, @NonNull TextView tvSpeed,
+      @NonNull TextView tvStatusTag) {
     this.rootView = rootView;
+    this.appBarLayout = appBarLayout;
+    this.bottomNav = bottomNav;
+    this.bottomNavCard = bottomNavCard;
     this.bottomSheet = bottomSheet;
-    this.btnLogout = btnLogout;
+    this.btnBackFromTrack = btnBackFromTrack;
     this.btnSearch = btnSearch;
+    this.busesContainer = busesContainer;
+    this.contentFrame = contentFrame;
+    this.drawerLayout = drawerLayout;
     this.etBusSearch = etBusSearch;
+    this.floatingBusInfo = floatingBusInfo;
+    this.floatingSearchCard = floatingSearchCard;
+    this.homeContainer = homeContainer;
+    this.ivToolbarProfile = ivToolbarProfile;
     this.mapView = mapView;
-    this.searchCard = searchCard;
-    this.topBar = topBar;
+    this.navigationView = navigationView;
+    this.profileContainer = profileContainer;
+    this.tagCard = tagCard;
+    this.toolbar = toolbar;
+    this.trackContainer = trackContainer;
     this.tvBusNo = tvBusNo;
+    this.tvDriverName = tvDriverName;
     this.tvETA = tvETA;
-    this.tvLiveStatus = tvLiveStatus;
+    this.tvFloatingBusNo = tvFloatingBusNo;
+    this.tvFloatingStatus = tvFloatingStatus;
     this.tvNextStop = tvNextStop;
     this.tvRoute = tvRoute;
+    this.tvSpeed = tvSpeed;
     this.tvStatusTag = tvStatusTag;
-    this.tvStudentName = tvStudentName;
   }
 
   @Override
   @NonNull
-  public CoordinatorLayout getRoot() {
+  public DrawerLayout getRoot() {
     return rootView;
   }
 
@@ -116,27 +190,83 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.appBarLayout;
+      AppBarLayout appBarLayout = ViewBindings.findChildViewById(rootView, id);
+      if (appBarLayout == null) {
+        break missingId;
+      }
+
+      id = R.id.bottomNav;
+      BottomNavigationView bottomNav = ViewBindings.findChildViewById(rootView, id);
+      if (bottomNav == null) {
+        break missingId;
+      }
+
+      id = R.id.bottomNavCard;
+      MaterialCardView bottomNavCard = ViewBindings.findChildViewById(rootView, id);
+      if (bottomNavCard == null) {
+        break missingId;
+      }
+
       id = R.id.bottomSheet;
       MaterialCardView bottomSheet = ViewBindings.findChildViewById(rootView, id);
       if (bottomSheet == null) {
         break missingId;
       }
 
-      id = R.id.btnLogout;
-      ImageButton btnLogout = ViewBindings.findChildViewById(rootView, id);
-      if (btnLogout == null) {
+      id = R.id.btnBackFromTrack;
+      ImageView btnBackFromTrack = ViewBindings.findChildViewById(rootView, id);
+      if (btnBackFromTrack == null) {
         break missingId;
       }
 
       id = R.id.btnSearch;
-      ImageButton btnSearch = ViewBindings.findChildViewById(rootView, id);
+      ImageView btnSearch = ViewBindings.findChildViewById(rootView, id);
       if (btnSearch == null) {
         break missingId;
       }
 
+      id = R.id.busesContainer;
+      FrameLayout busesContainer = ViewBindings.findChildViewById(rootView, id);
+      if (busesContainer == null) {
+        break missingId;
+      }
+
+      id = R.id.content_frame;
+      FrameLayout contentFrame = ViewBindings.findChildViewById(rootView, id);
+      if (contentFrame == null) {
+        break missingId;
+      }
+
+      DrawerLayout drawerLayout = (DrawerLayout) rootView;
+
       id = R.id.etBusSearch;
       EditText etBusSearch = ViewBindings.findChildViewById(rootView, id);
       if (etBusSearch == null) {
+        break missingId;
+      }
+
+      id = R.id.floatingBusInfo;
+      MaterialCardView floatingBusInfo = ViewBindings.findChildViewById(rootView, id);
+      if (floatingBusInfo == null) {
+        break missingId;
+      }
+
+      id = R.id.floatingSearchCard;
+      MaterialCardView floatingSearchCard = ViewBindings.findChildViewById(rootView, id);
+      if (floatingSearchCard == null) {
+        break missingId;
+      }
+
+      id = R.id.homeContainer;
+      FrameLayout homeContainer = ViewBindings.findChildViewById(rootView, id);
+      if (homeContainer == null) {
+        break missingId;
+      }
+
+      id = R.id.ivToolbarProfile;
+      ShapeableImageView ivToolbarProfile = ViewBindings.findChildViewById(rootView, id);
+      if (ivToolbarProfile == null) {
         break missingId;
       }
 
@@ -146,15 +276,33 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.searchCard;
-      MaterialCardView searchCard = ViewBindings.findChildViewById(rootView, id);
-      if (searchCard == null) {
+      id = R.id.navigation_view;
+      NavigationView navigationView = ViewBindings.findChildViewById(rootView, id);
+      if (navigationView == null) {
         break missingId;
       }
 
-      id = R.id.topBar;
-      MaterialCardView topBar = ViewBindings.findChildViewById(rootView, id);
-      if (topBar == null) {
+      id = R.id.profileContainer;
+      FrameLayout profileContainer = ViewBindings.findChildViewById(rootView, id);
+      if (profileContainer == null) {
+        break missingId;
+      }
+
+      id = R.id.tagCard;
+      MaterialCardView tagCard = ViewBindings.findChildViewById(rootView, id);
+      if (tagCard == null) {
+        break missingId;
+      }
+
+      id = R.id.toolbar;
+      MaterialToolbar toolbar = ViewBindings.findChildViewById(rootView, id);
+      if (toolbar == null) {
+        break missingId;
+      }
+
+      id = R.id.trackContainer;
+      FrameLayout trackContainer = ViewBindings.findChildViewById(rootView, id);
+      if (trackContainer == null) {
         break missingId;
       }
 
@@ -164,15 +312,27 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvDriverName;
+      TextView tvDriverName = ViewBindings.findChildViewById(rootView, id);
+      if (tvDriverName == null) {
+        break missingId;
+      }
+
       id = R.id.tvETA;
       TextView tvETA = ViewBindings.findChildViewById(rootView, id);
       if (tvETA == null) {
         break missingId;
       }
 
-      id = R.id.tvLiveStatus;
-      TextView tvLiveStatus = ViewBindings.findChildViewById(rootView, id);
-      if (tvLiveStatus == null) {
+      id = R.id.tvFloatingBusNo;
+      TextView tvFloatingBusNo = ViewBindings.findChildViewById(rootView, id);
+      if (tvFloatingBusNo == null) {
+        break missingId;
+      }
+
+      id = R.id.tvFloatingStatus;
+      TextView tvFloatingStatus = ViewBindings.findChildViewById(rootView, id);
+      if (tvFloatingStatus == null) {
         break missingId;
       }
 
@@ -188,21 +348,24 @@ public final class ActivityStudentDashboardBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvSpeed;
+      TextView tvSpeed = ViewBindings.findChildViewById(rootView, id);
+      if (tvSpeed == null) {
+        break missingId;
+      }
+
       id = R.id.tvStatusTag;
       TextView tvStatusTag = ViewBindings.findChildViewById(rootView, id);
       if (tvStatusTag == null) {
         break missingId;
       }
 
-      id = R.id.tvStudentName;
-      TextView tvStudentName = ViewBindings.findChildViewById(rootView, id);
-      if (tvStudentName == null) {
-        break missingId;
-      }
-
-      return new ActivityStudentDashboardBinding((CoordinatorLayout) rootView, bottomSheet,
-          btnLogout, btnSearch, etBusSearch, mapView, searchCard, topBar, tvBusNo, tvETA,
-          tvLiveStatus, tvNextStop, tvRoute, tvStatusTag, tvStudentName);
+      return new ActivityStudentDashboardBinding((DrawerLayout) rootView, appBarLayout, bottomNav,
+          bottomNavCard, bottomSheet, btnBackFromTrack, btnSearch, busesContainer, contentFrame,
+          drawerLayout, etBusSearch, floatingBusInfo, floatingSearchCard, homeContainer,
+          ivToolbarProfile, mapView, navigationView, profileContainer, tagCard, toolbar,
+          trackContainer, tvBusNo, tvDriverName, tvETA, tvFloatingBusNo, tvFloatingStatus,
+          tvNextStop, tvRoute, tvSpeed, tvStatusTag);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

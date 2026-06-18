@@ -6,8 +6,10 @@ public class Bus {
     @SerializedName("_id")
     private String id;
     private String busNumber;
-    private User driverId; // Populated from API
-    private Route routeId; // Populated from API
+    private String vehicleNumber;
+    private int capacity;
+    private User driverId;
+    private Route routeId;
     private CurrentLocation currentLocation;
     private String status;
 
@@ -18,7 +20,6 @@ public class Bus {
         private float heading;
         private String timestamp;
 
-        // Getters & Setters
         public double getLatitude() { return latitude; }
         public void setLatitude(double latitude) { this.latitude = latitude; }
 
@@ -35,12 +36,17 @@ public class Bus {
         public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
     }
 
-    // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
     public String getBusNumber() { return busNumber; }
     public void setBusNumber(String busNumber) { this.busNumber = busNumber; }
+
+    public String getVehicleNumber() { return vehicleNumber; }
+    public void setVehicleNumber(String vehicleNumber) { this.vehicleNumber = vehicleNumber; }
+
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
 
     public User getDriverId() { return driverId; }
     public void setDriverId(User driverId) { this.driverId = driverId; }

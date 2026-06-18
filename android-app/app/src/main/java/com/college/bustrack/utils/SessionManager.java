@@ -50,6 +50,10 @@ public class SessionManager {
         return pref.getString(KEY_USER_NAME, null);
     }
 
+    public String getUserEmail() {
+        return pref.getString(KEY_USER_EMAIL, null);
+    }
+
     public String getUserRole() {
         return pref.getString(KEY_USER_ROLE, null);
     }

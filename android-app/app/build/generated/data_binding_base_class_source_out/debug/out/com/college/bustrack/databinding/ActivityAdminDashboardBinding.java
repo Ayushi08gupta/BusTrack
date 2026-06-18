@@ -4,114 +4,48 @@ package com.college.bustrack.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.college.bustrack.R;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.navigation.NavigationView;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
 
 public final class ActivityAdminDashboardBinding implements ViewBinding {
   @NonNull
-  private final CoordinatorLayout rootView;
+  private final DrawerLayout rootView;
 
   @NonNull
-  public final MaterialButton btnAddStop;
+  public final DrawerLayout drawerLayout;
 
   @NonNull
-  public final MaterialButton btnAddUser;
+  public final FrameLayout fragmentContainer;
 
   @NonNull
-  public final MaterialButton btnBulkUpload;
-
-  @NonNull
-  public final ImageButton btnLogout;
-
-  @NonNull
-  public final MaterialButton btnTabRoutes;
-
-  @NonNull
-  public final MaterialButton btnTabUsers;
-
-  @NonNull
-  public final LinearLayout containerRoutes;
-
-  @NonNull
-  public final LinearLayout containerUsers;
-
-  @NonNull
-  public final TextInputEditText etRouteId;
-
-  @NonNull
-  public final TextInputEditText etStopLat;
-
-  @NonNull
-  public final TextInputEditText etStopLng;
-
-  @NonNull
-  public final TextInputEditText etStopName;
-
-  @NonNull
-  public final TextInputEditText etUserEmail;
-
-  @NonNull
-  public final TextInputEditText etUserName;
-
-  @NonNull
-  public final TextInputEditText etUserPassword;
-
-  @NonNull
-  public final TextInputEditText etUserRole;
-
-  @NonNull
-  public final RecyclerView rvUsers;
+  public final NavigationView navView;
 
   @NonNull
   public final MaterialToolbar toolbar;
 
-  private ActivityAdminDashboardBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull MaterialButton btnAddStop, @NonNull MaterialButton btnAddUser,
-      @NonNull MaterialButton btnBulkUpload, @NonNull ImageButton btnLogout,
-      @NonNull MaterialButton btnTabRoutes, @NonNull MaterialButton btnTabUsers,
-      @NonNull LinearLayout containerRoutes, @NonNull LinearLayout containerUsers,
-      @NonNull TextInputEditText etRouteId, @NonNull TextInputEditText etStopLat,
-      @NonNull TextInputEditText etStopLng, @NonNull TextInputEditText etStopName,
-      @NonNull TextInputEditText etUserEmail, @NonNull TextInputEditText etUserName,
-      @NonNull TextInputEditText etUserPassword, @NonNull TextInputEditText etUserRole,
-      @NonNull RecyclerView rvUsers, @NonNull MaterialToolbar toolbar) {
+  private ActivityAdminDashboardBinding(@NonNull DrawerLayout rootView,
+      @NonNull DrawerLayout drawerLayout, @NonNull FrameLayout fragmentContainer,
+      @NonNull NavigationView navView, @NonNull MaterialToolbar toolbar) {
     this.rootView = rootView;
-    this.btnAddStop = btnAddStop;
-    this.btnAddUser = btnAddUser;
-    this.btnBulkUpload = btnBulkUpload;
-    this.btnLogout = btnLogout;
-    this.btnTabRoutes = btnTabRoutes;
-    this.btnTabUsers = btnTabUsers;
-    this.containerRoutes = containerRoutes;
-    this.containerUsers = containerUsers;
-    this.etRouteId = etRouteId;
-    this.etStopLat = etStopLat;
-    this.etStopLng = etStopLng;
-    this.etStopName = etStopName;
-    this.etUserEmail = etUserEmail;
-    this.etUserName = etUserName;
-    this.etUserPassword = etUserPassword;
-    this.etUserRole = etUserRole;
-    this.rvUsers = rvUsers;
+    this.drawerLayout = drawerLayout;
+    this.fragmentContainer = fragmentContainer;
+    this.navView = navView;
     this.toolbar = toolbar;
   }
 
   @Override
   @NonNull
-  public CoordinatorLayout getRoot() {
+  public DrawerLayout getRoot() {
     return rootView;
   }
 
@@ -136,105 +70,17 @@ public final class ActivityAdminDashboardBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.btnAddStop;
-      MaterialButton btnAddStop = ViewBindings.findChildViewById(rootView, id);
-      if (btnAddStop == null) {
+      DrawerLayout drawerLayout = (DrawerLayout) rootView;
+
+      id = R.id.fragment_container;
+      FrameLayout fragmentContainer = ViewBindings.findChildViewById(rootView, id);
+      if (fragmentContainer == null) {
         break missingId;
       }
 
-      id = R.id.btnAddUser;
-      MaterialButton btnAddUser = ViewBindings.findChildViewById(rootView, id);
-      if (btnAddUser == null) {
-        break missingId;
-      }
-
-      id = R.id.btnBulkUpload;
-      MaterialButton btnBulkUpload = ViewBindings.findChildViewById(rootView, id);
-      if (btnBulkUpload == null) {
-        break missingId;
-      }
-
-      id = R.id.btnLogout;
-      ImageButton btnLogout = ViewBindings.findChildViewById(rootView, id);
-      if (btnLogout == null) {
-        break missingId;
-      }
-
-      id = R.id.btnTabRoutes;
-      MaterialButton btnTabRoutes = ViewBindings.findChildViewById(rootView, id);
-      if (btnTabRoutes == null) {
-        break missingId;
-      }
-
-      id = R.id.btnTabUsers;
-      MaterialButton btnTabUsers = ViewBindings.findChildViewById(rootView, id);
-      if (btnTabUsers == null) {
-        break missingId;
-      }
-
-      id = R.id.containerRoutes;
-      LinearLayout containerRoutes = ViewBindings.findChildViewById(rootView, id);
-      if (containerRoutes == null) {
-        break missingId;
-      }
-
-      id = R.id.containerUsers;
-      LinearLayout containerUsers = ViewBindings.findChildViewById(rootView, id);
-      if (containerUsers == null) {
-        break missingId;
-      }
-
-      id = R.id.etRouteId;
-      TextInputEditText etRouteId = ViewBindings.findChildViewById(rootView, id);
-      if (etRouteId == null) {
-        break missingId;
-      }
-
-      id = R.id.etStopLat;
-      TextInputEditText etStopLat = ViewBindings.findChildViewById(rootView, id);
-      if (etStopLat == null) {
-        break missingId;
-      }
-
-      id = R.id.etStopLng;
-      TextInputEditText etStopLng = ViewBindings.findChildViewById(rootView, id);
-      if (etStopLng == null) {
-        break missingId;
-      }
-
-      id = R.id.etStopName;
-      TextInputEditText etStopName = ViewBindings.findChildViewById(rootView, id);
-      if (etStopName == null) {
-        break missingId;
-      }
-
-      id = R.id.etUserEmail;
-      TextInputEditText etUserEmail = ViewBindings.findChildViewById(rootView, id);
-      if (etUserEmail == null) {
-        break missingId;
-      }
-
-      id = R.id.etUserName;
-      TextInputEditText etUserName = ViewBindings.findChildViewById(rootView, id);
-      if (etUserName == null) {
-        break missingId;
-      }
-
-      id = R.id.etUserPassword;
-      TextInputEditText etUserPassword = ViewBindings.findChildViewById(rootView, id);
-      if (etUserPassword == null) {
-        break missingId;
-      }
-
-      id = R.id.etUserRole;
-      TextInputEditText etUserRole = ViewBindings.findChildViewById(rootView, id);
-      if (etUserRole == null) {
-        break missingId;
-      }
-
-      id = R.id.rvUsers;
-      RecyclerView rvUsers = ViewBindings.findChildViewById(rootView, id);
-      if (rvUsers == null) {
+      id = R.id.nav_view;
+      NavigationView navView = ViewBindings.findChildViewById(rootView, id);
+      if (navView == null) {
         break missingId;
       }
 
@@ -244,10 +90,8 @@ public final class ActivityAdminDashboardBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityAdminDashboardBinding((CoordinatorLayout) rootView, btnAddStop, btnAddUser,
-          btnBulkUpload, btnLogout, btnTabRoutes, btnTabUsers, containerRoutes, containerUsers,
-          etRouteId, etStopLat, etStopLng, etStopName, etUserEmail, etUserName, etUserPassword,
-          etUserRole, rvUsers, toolbar);
+      return new ActivityAdminDashboardBinding((DrawerLayout) rootView, drawerLayout,
+          fragmentContainer, navView, toolbar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

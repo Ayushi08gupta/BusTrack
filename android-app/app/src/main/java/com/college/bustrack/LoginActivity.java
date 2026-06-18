@@ -2,6 +2,7 @@ package com.college.bustrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -9,11 +10,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.college.bustrack.api.ApiClient;
 import com.college.bustrack.api.ApiService;
+import com.college.bustrack.models.ChangePasswordRequest;
 import com.college.bustrack.models.GenericResponse;
 import com.college.bustrack.models.LoginRequest;
 import com.college.bustrack.models.LoginResponse;
@@ -22,8 +23,8 @@ import com.college.bustrack.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,12 +32,13 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText etEmail, etPassword, etNewPassword, etConfirmPassword;
-    private MaterialButton btnLogin, btnSubmitNewPassword;
-    private TextView tvForgotPassword;
-    private ProgressBar progressBar;
+    private TextInputEditText etUsernameOrEmail, etPassword;
+    private TextInputEditText etNewPassword, etConfirmPassword;
     private LinearLayout loginFieldsContainer, changePasswordContainer;
-    
+    private MaterialButton btnLogin, btnSubmitNewPassword;
+    private TextView tvRegisterLink;
+    private ProgressBar progressBar;
+
     private SessionManager sessionManager;
     private ApiService apiService;
     private String tempToken;
@@ -49,177 +51,107 @@ public class LoginActivity extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         apiService = ApiClient.getApiService();
 
-        if (sessionManager.isLoggedIn()) {
+        if (sessionManager.isLoggedIn() && !sessionManager.isFirstLogin()) {
             navigateBasedOnRole(sessionManager.getUserRole());
             return;
         }
 
-        // Login Views
-        etEmail = findViewById(R.id.etUsernameOrEmail);
+        etUsernameOrEmail = findViewById(R.id.etUsernameOrEmail);
         etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        tvForgotPassword = findViewById(R.id.tvRegisterLink); 
-        progressBar = findViewById(R.id.progressBar);
-        loginFieldsContainer = findViewById(R.id.loginFieldsContainer);
-        
-        // Change Password Views
-        changePasswordContainer = findViewById(R.id.changePasswordContainer);
         etNewPassword = findViewById(R.id.etNewPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
+        loginFieldsContainer = findViewById(R.id.loginFieldsContainer);
+        changePasswordContainer = findViewById(R.id.changePasswordContainer);
+        btnLogin = findViewById(R.id.btnLogin);
         btnSubmitNewPassword = findViewById(R.id.btnSubmitNewPassword);
+        tvRegisterLink = findViewById(R.id.tvRegisterLink);
+        progressBar = findViewById(R.id.progressBar);
 
-        if (tvForgotPassword != null) {
-            tvForgotPassword.setText("Forgot Password?");
-            tvForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
-        }
-        
-        if (btnLogin != null) {
-            btnLogin.setOnClickListener(v -> performLogin());
-        }
-
-        if (btnSubmitNewPassword != null) {
-            btnSubmitNewPassword.setOnClickListener(v -> updatePassword());
-        }
+        btnLogin.setOnClickListener(v -> performLogin());
+        btnSubmitNewPassword.setOnClickListener(v -> performPasswordChange());
+        tvRegisterLink.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        });
     }
 
     private void performLogin() {
-        String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
+        Editable userEdit = etUsernameOrEmail.getText();
+        Editable passEdit = etPassword.getText();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
+        if (userEdit == null || passEdit == null) return;
+
+        String usernameOrEmail = userEdit.toString().trim();
+        String password = passEdit.toString().trim();
+
+        if (usernameOrEmail.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
-        btnLogin.setEnabled(false);
+        showLoading(true);
 
-        LoginRequest loginRequest = new LoginRequest(email, password);
-        apiService.login(loginRequest).enqueue(new Callback<LoginResponse>() {
+        LoginRequest request = new LoginRequest(usernameOrEmail, password);
+        apiService.login(request).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-                progressBar.setVisibility(View.GONE);
-                btnLogin.setEnabled(true);
-
+                showLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse loginResponse = response.body();
                     User user = loginResponse.getUser();
-                    if (user == null) return;
+                    String token = "Bearer " + loginResponse.getToken();
 
-                    tempToken = "Bearer " + loginResponse.getToken();
+                    sessionManager.saveSession(
+                            token, user.getId(), user.getName(), user.getEmail(),
+                            user.getRole(), user.isFirstLogin(), user.getAssignedBusId()
+                    );
 
                     if (user.isFirstLogin()) {
-                        showChangePasswordUI();
+                        tempToken = token;
+                        loginFieldsContainer.setVisibility(View.GONE);
+                        changePasswordContainer.setVisibility(View.VISIBLE);
                     } else {
-                        saveSessionAndNavigate(loginResponse);
+                        navigateBasedOnRole(user.getRole());
                     }
                 } else {
-                    Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Invalid credentials or login failed", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                btnLogin.setEnabled(true);
-                Toast.makeText(LoginActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                showLoading(false);
+                Toast.makeText(LoginActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void showChangePasswordUI() {
-        if (loginFieldsContainer != null) loginFieldsContainer.setVisibility(View.GONE);
-        if (changePasswordContainer != null) changePasswordContainer.setVisibility(View.VISIBLE);
-        Toast.makeText(this, "First login: Please set a new password", Toast.LENGTH_LONG).show();
-    }
+    private void performPasswordChange() {
+        Editable newPassEdit = etNewPassword.getText();
+        Editable confirmPassEdit = etConfirmPassword.getText();
 
-    private void updatePassword() {
-        String newPass = etNewPassword.getText().toString().trim();
-        String confirmPass = etConfirmPassword.getText().toString().trim();
+        if (newPassEdit == null || confirmPassEdit == null) return;
 
-        if (newPass.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+        String newPassword = newPassEdit.toString().trim();
+        String confirmPassword = confirmPassEdit.toString().trim();
+
+        if (newPassword.isEmpty() || confirmPassword.isEmpty() || !newPassword.equals(confirmPassword)) {
+            Toast.makeText(this, "Check your passwords", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (!newPass.equals(confirmPass)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        progressBar.setVisibility(View.VISIBLE);
-        Map<String, String> body = new HashMap<>();
-        body.put("newPassword", newPass);
-
-        apiService.changePassword(tempToken, body).enqueue(new Callback<GenericResponse>() {
+        showLoading(true);
+        apiService.changePassword(tempToken, java.util.Collections.singletonMap("newPassword", newPassword)).enqueue(new Callback<GenericResponse>() {
             @Override
-            public void onResponse(Call<GenericResponse> call, Response<GenericResponse> response) {
-                progressBar.setVisibility(View.GONE);
+            public void onResponse(@NonNull Call<GenericResponse> call, @NonNull Response<GenericResponse> response) {
+                showLoading(false);
                 if (response.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, "Password updated! Please login again.", Toast.LENGTH_LONG).show();
-                    changePasswordContainer.setVisibility(View.GONE);
-                    loginFieldsContainer.setVisibility(View.VISIBLE);
-                    etPassword.setText("");
-                } else {
-                    Toast.makeText(LoginActivity.this, "Update failed", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GenericResponse> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(LoginActivity.this, "Network error", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void saveSessionAndNavigate(LoginResponse loginResponse) {
-        User user = loginResponse.getUser();
-        sessionManager.saveSession(
-                "Bearer " + loginResponse.getToken(),
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole(),
-                user.isFirstLogin(),
-                user.getAssignedBusId()
-        );
-        navigateBasedOnRole(user.getRole());
-    }
-
-    private void showForgotPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Forgot Password");
-        
-        final View customLayout = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
-        builder.setView(customLayout);
-        
-        builder.setPositiveButton("Send Reset Link", (dialog, which) -> {
-            TextInputEditText etResetEmail = customLayout.findViewById(R.id.etResetEmail);
-            if (etResetEmail != null) {
-                sendResetLink(etResetEmail.getText().toString().trim());
-            }
-        });
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
-    }
-
-    private void sendResetLink(String email) {
-        if (email.isEmpty()) return;
-        Map<String, String> body = new HashMap<>();
-        body.put("email", email);
-        apiService.forgotPassword(body).enqueue(new Callback<GenericResponse>() {
-            @Override
-            public void onResponse(Call<GenericResponse> call, Response<GenericResponse> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, "Reset link sent to " + email, Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(LoginActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                    sessionManager.setFirstLogin(false);
+                    navigateBasedOnRole(sessionManager.getUserRole());
                 }
             }
             @Override
-            public void onFailure(Call<GenericResponse> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "Error sending reset link", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<GenericResponse> call, @NonNull Throwable t) {
+                showLoading(false);
             }
         });
     }
@@ -227,19 +159,19 @@ public class LoginActivity extends AppCompatActivity {
     private void navigateBasedOnRole(String role) {
         if (role == null) return;
         Intent intent;
-        switch (role.toUpperCase()) {
-            case "ADMIN":
-                intent = new Intent(this, AdminDashboardActivity.class);
-                break;
-            case "DRIVER":
-                intent = new Intent(this, DriverDashboardActivity.class);
-                break;
-            case "STUDENT":
-            default:
-                intent = new Intent(this, StudentDashboardActivity.class);
-                break;
+        if (role.equalsIgnoreCase("admin")) {
+            intent = new Intent(this, AdminDashboardActivity.class);
+        } else if (role.equalsIgnoreCase("driver")) {
+            intent = new Intent(this, DriverDashboardActivity.class);
+        } else {
+            intent = new Intent(this, StudentDashboardActivity.class);
         }
         startActivity(intent);
         finish();
+    }
+
+    private void showLoading(boolean isLoading) {
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        btnLogin.setEnabled(!isLoading);
     }
 }

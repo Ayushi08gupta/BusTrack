@@ -4,7 +4,7 @@
             "outputFile": "com.college.bustrack.app-mergeDebugResources-41:/values-th/values-th.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\ayush\\.gradle\\caches\\8.13\\transforms\\95524671b3f6a4560196fca52c22901e\\transformed\\core-1.13.0\\res\\values-th\\values-th.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\8.13\\transforms\\95524671b3f6a4560196fca52c22901e\\transformed\\core-1.13.0\\res\\values-th\\values-th.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ayush\\.gradle\\caches\\8.13\\transforms\\91384764859a7d5477c78d4045bd7738\\transformed\\jetified-play-services-base-18.3.0\\res\\values-th\\values.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\8.13\\transforms\\91384764859a7d5477c78d4045bd7738\\transformed\\jetified-play-services-base-18.3.0\\res\\values-th\\values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -38,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ayush\\.gradle\\caches\\8.13\\transforms\\ccdb6048fac66bf50b4f7f9ffc97a838\\transformed\\jetified-play-services-basement-18.3.0\\res\\values-th\\values.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\8.13\\transforms\\ccdb6048fac66bf50b4f7f9ffc97a838\\transformed\\jetified-play-services-basement-18.3.0\\res\\values-th\\values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
@@ -55,7 +55,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ayush\\.gradle\\caches\\8.13\\transforms\\f85a5882ce1f7578ced5041fc03ba9b9\\transformed\\appcompat-1.6.1\\res\\values-th\\values-th.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\8.13\\transforms\\f85a5882ce1f7578ced5041fc03ba9b9\\transformed\\appcompat-1.6.1\\res\\values-th\\values-th.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -72,24 +72,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ayush\\.gradle\\caches\\8.13\\transforms\\1b916eb40f03825c25ce3c810082ae31\\transformed\\jetified-places-3.5.0\\res\\values-th\\values.xml",
-                    "from": {
-                        "startLines": "4,5,6,7,8,9,10,11",
-                        "startColumns": "0,0,0,0,0,0,0,0",
-                        "startOffsets": "184,254,317,406,475,520,590,655",
-                        "endColumns": "69,62,88,68,44,69,64,52",
-                        "endOffsets": "253,316,405,474,519,589,654,707"
-                    },
-                    "to": {
-                        "startLines": "133,134,135,136,137,138,139,140",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "11689,11763,11830,11923,11996,12045,12119,12188",
-                        "endColumns": "73,66,92,72,48,73,68,56",
-                        "endOffsets": "11758,11825,11918,11991,12040,12114,12183,12240"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\ayush\\.gradle\\caches\\8.13\\transforms\\39b21c42b365e3947795899310cb8ab6\\transformed\\preference-1.2.1\\res\\values-th\\values-th.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\8.13\\transforms\\39b21c42b365e3947795899310cb8ab6\\transformed\\preference-1.2.1\\res\\values-th\\values-th.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8",
                         "startColumns": "4,4,4,4,4,4,4",
@@ -106,7 +89,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ayush\\.gradle\\caches\\8.13\\transforms\\34788bf6a743afff2daeb34aec3f72ef\\transformed\\material-1.12.0\\res\\values-th\\values-th.xml",
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\8.13\\transforms\\1b916eb40f03825c25ce3c810082ae31\\transformed\\jetified-places-3.5.0\\res\\values-th\\values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7,8,9,10,11",
+                        "startColumns": "0,0,0,0,0,0,0,0",
+                        "startOffsets": "184,254,317,406,475,520,590,655",
+                        "endColumns": "69,62,88,68,44,69,64,52",
+                        "endOffsets": "253,316,405,474,519,589,654,707"
+                    },
+                    "to": {
+                        "startLines": "133,134,135,136,137,138,139,140",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "11689,11763,11830,11923,11996,12045,12119,12188",
+                        "endColumns": "73,66,92,72,48,73,68,56",
+                        "endOffsets": "11758,11825,11918,11991,12040,12114,12183,12240"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\HP\\.gradle\\caches\\8.13\\transforms\\34788bf6a743afff2daeb34aec3f72ef\\transformed\\material-1.12.0\\res\\values-th\\values-th.xml",
                     "from": {
                         "startLines": "2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

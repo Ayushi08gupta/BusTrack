@@ -13,6 +13,8 @@ public class User {
     private boolean isFirstLogin;
     private String assignedBusId;
     private boolean isActive;
+    private String department;
+    private String semester;
     
     // For UI selection in bulk operations
     private transient boolean selected;
@@ -47,4 +49,10 @@ public class User {
 
     public boolean isSelected() { return selected; }
     public void setSelected(boolean selected) { this.selected = selected; }
+
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
+
+    public String getSemester() { return semester; }
+    public void setSemester(String semester) { this.semester = semester; }
 }

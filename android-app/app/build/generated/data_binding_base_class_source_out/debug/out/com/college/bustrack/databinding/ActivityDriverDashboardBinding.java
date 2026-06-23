@@ -8,10 +8,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.college.bustrack.R;
+import com.google.android.gms.maps.MapView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import java.lang.NullPointerException;
@@ -20,7 +21,7 @@ import java.lang.String;
 
 public final class ActivityDriverDashboardBinding implements ViewBinding {
   @NonNull
-  private final CoordinatorLayout rootView;
+  private final ConstraintLayout rootView;
 
   @NonNull
   public final MaterialCardView bottomSheet;
@@ -38,56 +39,37 @@ public final class ActivityDriverDashboardBinding implements ViewBinding {
   public final MaterialCardView headerCard;
 
   @NonNull
+  public final MapView mapView;
+
+  @NonNull
   public final TextView tvBusNumber;
-
-  @NonNull
-  public final TextView tvRouteDuration;
-
-  @NonNull
-  public final TextView tvRouteName;
-
-  @NonNull
-  public final TextView tvStopsCount;
 
   @NonNull
   public final TextView tvTripStatus;
 
   @NonNull
-  public final TextView tvUpcomingStopName;
-
-  @NonNull
   public final TextView tvWelcomeDriver;
 
-  @NonNull
-  public final MaterialCardView upcomingStopCard;
-
-  private ActivityDriverDashboardBinding(@NonNull CoordinatorLayout rootView,
+  private ActivityDriverDashboardBinding(@NonNull ConstraintLayout rootView,
       @NonNull MaterialCardView bottomSheet, @NonNull MaterialButton btnEndTrip,
       @NonNull ImageButton btnLogout, @NonNull MaterialButton btnStartTrip,
-      @NonNull MaterialCardView headerCard, @NonNull TextView tvBusNumber,
-      @NonNull TextView tvRouteDuration, @NonNull TextView tvRouteName,
-      @NonNull TextView tvStopsCount, @NonNull TextView tvTripStatus,
-      @NonNull TextView tvUpcomingStopName, @NonNull TextView tvWelcomeDriver,
-      @NonNull MaterialCardView upcomingStopCard) {
+      @NonNull MaterialCardView headerCard, @NonNull MapView mapView, @NonNull TextView tvBusNumber,
+      @NonNull TextView tvTripStatus, @NonNull TextView tvWelcomeDriver) {
     this.rootView = rootView;
     this.bottomSheet = bottomSheet;
     this.btnEndTrip = btnEndTrip;
     this.btnLogout = btnLogout;
     this.btnStartTrip = btnStartTrip;
     this.headerCard = headerCard;
+    this.mapView = mapView;
     this.tvBusNumber = tvBusNumber;
-    this.tvRouteDuration = tvRouteDuration;
-    this.tvRouteName = tvRouteName;
-    this.tvStopsCount = tvStopsCount;
     this.tvTripStatus = tvTripStatus;
-    this.tvUpcomingStopName = tvUpcomingStopName;
     this.tvWelcomeDriver = tvWelcomeDriver;
-    this.upcomingStopCard = upcomingStopCard;
   }
 
   @Override
   @NonNull
-  public CoordinatorLayout getRoot() {
+  public ConstraintLayout getRoot() {
     return rootView;
   }
 
@@ -142,27 +124,15 @@ public final class ActivityDriverDashboardBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.mapView;
+      MapView mapView = ViewBindings.findChildViewById(rootView, id);
+      if (mapView == null) {
+        break missingId;
+      }
+
       id = R.id.tvBusNumber;
       TextView tvBusNumber = ViewBindings.findChildViewById(rootView, id);
       if (tvBusNumber == null) {
-        break missingId;
-      }
-
-      id = R.id.tvRouteDuration;
-      TextView tvRouteDuration = ViewBindings.findChildViewById(rootView, id);
-      if (tvRouteDuration == null) {
-        break missingId;
-      }
-
-      id = R.id.tvRouteName;
-      TextView tvRouteName = ViewBindings.findChildViewById(rootView, id);
-      if (tvRouteName == null) {
-        break missingId;
-      }
-
-      id = R.id.tvStopsCount;
-      TextView tvStopsCount = ViewBindings.findChildViewById(rootView, id);
-      if (tvStopsCount == null) {
         break missingId;
       }
 
@@ -172,28 +142,15 @@ public final class ActivityDriverDashboardBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvUpcomingStopName;
-      TextView tvUpcomingStopName = ViewBindings.findChildViewById(rootView, id);
-      if (tvUpcomingStopName == null) {
-        break missingId;
-      }
-
       id = R.id.tvWelcomeDriver;
       TextView tvWelcomeDriver = ViewBindings.findChildViewById(rootView, id);
       if (tvWelcomeDriver == null) {
         break missingId;
       }
 
-      id = R.id.upcomingStopCard;
-      MaterialCardView upcomingStopCard = ViewBindings.findChildViewById(rootView, id);
-      if (upcomingStopCard == null) {
-        break missingId;
-      }
-
-      return new ActivityDriverDashboardBinding((CoordinatorLayout) rootView, bottomSheet,
-          btnEndTrip, btnLogout, btnStartTrip, headerCard, tvBusNumber, tvRouteDuration,
-          tvRouteName, tvStopsCount, tvTripStatus, tvUpcomingStopName, tvWelcomeDriver,
-          upcomingStopCard);
+      return new ActivityDriverDashboardBinding((ConstraintLayout) rootView, bottomSheet,
+          btnEndTrip, btnLogout, btnStartTrip, headerCard, mapView, tvBusNumber, tvTripStatus,
+          tvWelcomeDriver);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

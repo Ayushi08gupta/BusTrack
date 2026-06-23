@@ -26,6 +26,7 @@ import com.college.bustrack.adapter.AssignmentStopAdapter;
 import com.college.bustrack.api.ApiClient;
 import com.college.bustrack.api.ApiService;
 import com.college.bustrack.models.GenericResponse;
+import com.college.bustrack.models.Bus;
 import com.college.bustrack.models.Stop;
 import com.college.bustrack.models.User;
 import com.college.bustrack.utils.SessionManager;
@@ -48,6 +49,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.button.MaterialButton;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -84,7 +86,9 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
     private ApiService apiService;
     private SessionManager sessionManager;
     private List<User> allDrivers = new ArrayList<>();
+    private List<Bus> availableBuses = new ArrayList<>();
     private User selectedDriver;
+    private Bus selectedBus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +109,7 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
         initViews();
         setupMap();
         loadDrivers();
+        loadAvailableBuses();
     }
 
     private void initViews() {
@@ -116,6 +121,14 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
         progressBar = findViewById(R.id.progressBar);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+
+        etBusNumber.setFocusable(true);
+        etBusNumber.setFocusableInTouchMode(true);
+        etBusNumber.setOnClickListener(null); // Allow typing instead of just dialog
+        etBusNumber.setOnLongClickListener(v -> {
+            showBusSelectionDialog();
+            return true;
+        });
 
         rvStops.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AssignmentStopAdapter(routeStops, new AssignmentStopAdapter.OnStopActionListener() {
@@ -155,6 +168,26 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
         menuDriver.setOnItemClickListener((parent, view, position, id) -> selectedDriver = allDrivers.get(position));
     }
 
+    private void showBusSelectionDialog() {
+        if (availableBuses.isEmpty()) {
+            Toast.makeText(this, "No available buses found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] busNumbers = new String[availableBuses.size()];
+        for (int i = 0; i < availableBuses.size(); i++) {
+            busNumbers[i] = availableBuses.get(i).getBusNumber();
+        }
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Select Bus")
+                .setItems(busNumbers, (dialog, which) -> {
+                    selectedBus = availableBuses.get(which);
+                    etBusNumber.setText(selectedBus.getBusNumber());
+                })
+                .show();
+    }
+
     private void startSearch() {
         List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
@@ -173,7 +206,22 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
         mMap.getUiSettings().setZoomControlsEnabled(true);
         LatLng center = new LatLng(23.2599, 77.4126); // Bhopal default
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 12f));
-        mMap.setOnMapClickListener(latLng -> addStopAtLocation("Custom Stop " + (routeStops.size() + 1), latLng));
+        mMap.setOnMapClickListener(this::getAddressAndAddStop);
+    }
+
+    private void getAddressAndAddStop(LatLng latLng) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            String stopName = "Unknown Location";
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                stopName = address.getLocality() != null ? address.getLocality() : address.getAddressLine(0);
+            }
+            addStopAtLocation(stopName, latLng);
+        } catch (IOException e) {
+            addStopAtLocation("Custom Stop " + (routeStops.size() + 1), latLng);
+        }
     }
 
     @Override
@@ -280,18 +328,14 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void loadDrivers() {
-        apiService.adminGetUsers(sessionManager.getToken()).enqueue(new Callback<List<User>>() {
+        apiService.getAvailableDrivers(sessionManager.getToken()).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     allDrivers.clear();
+                    allDrivers.addAll(response.body());
                     List<String> names = new ArrayList<>();
-                    for (User u : response.body()) {
-                        if ("driver".equalsIgnoreCase(u.getRole())) {
-                            allDrivers.add(u);
-                            names.add(u.getName());
-                        }
-                    }
+                    for (User u : allDrivers) names.add(u.getName());
                     menuDriver.setAdapter(new ArrayAdapter<>(BusAssignmentActivity.this, android.R.layout.simple_list_item_1, names));
                 }
             }
@@ -302,10 +346,23 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
         });
     }
 
+    private void loadAvailableBuses() {
+        apiService.getAvailableBuses(sessionManager.getToken()).enqueue(new Callback<List<Bus>>() {
+            @Override
+            public void onResponse(Call<List<Bus>> call, Response<List<Bus>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    availableBuses.clear();
+                    availableBuses.addAll(response.body());
+                }
+            }
+            @Override public void onFailure(Call<List<Bus>> call, Throwable t) {}
+        });
+    }
+
     private void saveFullAssignment() {
-        String busNo = etBusNumber.getText().toString().trim();
-        if (busNo.isEmpty() || selectedDriver == null || routeStops.isEmpty()) {
-            Toast.makeText(this, "Fill Bus, Driver and add Stops", Toast.LENGTH_SHORT).show();
+        String busNumberText = etBusNumber.getText().toString().trim();
+        if (busNumberText.isEmpty() || selectedDriver == null || routeStops.isEmpty()) {
+            Toast.makeText(this, "Enter Bus No, select Driver and add Stops", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -318,9 +375,9 @@ public class BusAssignmentActivity extends AppCompatActivity implements OnMapRea
 
         showLoading(true);
         Map<String, Object> data = new HashMap<>();
-        data.put("busNumber", busNo);
+        data.put("busNumber", busNumberText);
         data.put("driverId", selectedDriver.getId());
-        data.put("routeName", "Route " + busNo);
+        data.put("routeName", "Route " + busNumberText);
         data.put("stops", routeStops);
 
         apiService.adminFullAssignment(sessionManager.getToken(), data).enqueue(new Callback<GenericResponse>() {

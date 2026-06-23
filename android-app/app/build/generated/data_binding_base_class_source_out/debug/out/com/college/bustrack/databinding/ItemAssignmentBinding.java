@@ -4,6 +4,7 @@ package com.college.bustrack.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,9 @@ public final class ItemAssignmentBinding implements ViewBinding {
   private final MaterialCardView rootView;
 
   @NonNull
+  public final ImageButton btnDeleteAssignment;
+
+  @NonNull
   public final Chip chipRouteStatus;
 
   @NonNull
@@ -35,10 +39,12 @@ public final class ItemAssignmentBinding implements ViewBinding {
   @NonNull
   public final TextView tvRouteName;
 
-  private ItemAssignmentBinding(@NonNull MaterialCardView rootView, @NonNull Chip chipRouteStatus,
+  private ItemAssignmentBinding(@NonNull MaterialCardView rootView,
+      @NonNull ImageButton btnDeleteAssignment, @NonNull Chip chipRouteStatus,
       @NonNull TextView tvBusNumber, @NonNull TextView tvDriverName, @NonNull TextView tvNextStop,
       @NonNull TextView tvRouteName) {
     this.rootView = rootView;
+    this.btnDeleteAssignment = btnDeleteAssignment;
     this.chipRouteStatus = chipRouteStatus;
     this.tvBusNumber = tvBusNumber;
     this.tvDriverName = tvDriverName;
@@ -73,6 +79,12 @@ public final class ItemAssignmentBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnDeleteAssignment;
+      ImageButton btnDeleteAssignment = ViewBindings.findChildViewById(rootView, id);
+      if (btnDeleteAssignment == null) {
+        break missingId;
+      }
+
       id = R.id.chipRouteStatus;
       Chip chipRouteStatus = ViewBindings.findChildViewById(rootView, id);
       if (chipRouteStatus == null) {
@@ -103,8 +115,8 @@ public final class ItemAssignmentBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemAssignmentBinding((MaterialCardView) rootView, chipRouteStatus, tvBusNumber,
-          tvDriverName, tvNextStop, tvRouteName);
+      return new ItemAssignmentBinding((MaterialCardView) rootView, btnDeleteAssignment,
+          chipRouteStatus, tvBusNumber, tvDriverName, tvNextStop, tvRouteName);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

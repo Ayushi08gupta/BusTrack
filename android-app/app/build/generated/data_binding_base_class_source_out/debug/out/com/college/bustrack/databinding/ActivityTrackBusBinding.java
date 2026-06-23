@@ -4,7 +4,7 @@ package com.college.bustrack.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,9 +12,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.college.bustrack.R;
+import com.google.android.gms.maps.MapView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.chip.Chip;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
@@ -27,53 +28,57 @@ public final class ActivityTrackBusBinding implements ViewBinding {
   public final MaterialCardView bottomSheet;
 
   @NonNull
-  public final ImageButton btnBack;
+  public final MaterialButton btnBack;
 
   @NonNull
-  public final MaterialButton btnReportIssue;
+  public final ExtendedFloatingActionButton fabReport;
 
   @NonNull
-  public final MaterialCardView cardBack;
+  public final MapView mapView;
 
   @NonNull
-  public final Chip chipStatus;
+  public final LinearLayout timelineContainer;
 
   @NonNull
-  public final TextView tvBusNumber;
+  public final TextView tvBusId;
 
   @NonNull
   public final TextView tvDistance;
 
   @NonNull
-  public final TextView tvDriverName;
+  public final TextView tvDriver;
 
   @NonNull
   public final TextView tvETA;
 
   @NonNull
+  public final TextView tvLiveStatus;
+
+  @NonNull
   public final TextView tvNextStop;
 
   @NonNull
-  public final TextView tvRemainingStops;
+  public final TextView tvSpeed;
 
   private ActivityTrackBusBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull MaterialCardView bottomSheet, @NonNull ImageButton btnBack,
-      @NonNull MaterialButton btnReportIssue, @NonNull MaterialCardView cardBack,
-      @NonNull Chip chipStatus, @NonNull TextView tvBusNumber, @NonNull TextView tvDistance,
-      @NonNull TextView tvDriverName, @NonNull TextView tvETA, @NonNull TextView tvNextStop,
-      @NonNull TextView tvRemainingStops) {
+      @NonNull MaterialCardView bottomSheet, @NonNull MaterialButton btnBack,
+      @NonNull ExtendedFloatingActionButton fabReport, @NonNull MapView mapView,
+      @NonNull LinearLayout timelineContainer, @NonNull TextView tvBusId,
+      @NonNull TextView tvDistance, @NonNull TextView tvDriver, @NonNull TextView tvETA,
+      @NonNull TextView tvLiveStatus, @NonNull TextView tvNextStop, @NonNull TextView tvSpeed) {
     this.rootView = rootView;
     this.bottomSheet = bottomSheet;
     this.btnBack = btnBack;
-    this.btnReportIssue = btnReportIssue;
-    this.cardBack = cardBack;
-    this.chipStatus = chipStatus;
-    this.tvBusNumber = tvBusNumber;
+    this.fabReport = fabReport;
+    this.mapView = mapView;
+    this.timelineContainer = timelineContainer;
+    this.tvBusId = tvBusId;
     this.tvDistance = tvDistance;
-    this.tvDriverName = tvDriverName;
+    this.tvDriver = tvDriver;
     this.tvETA = tvETA;
+    this.tvLiveStatus = tvLiveStatus;
     this.tvNextStop = tvNextStop;
-    this.tvRemainingStops = tvRemainingStops;
+    this.tvSpeed = tvSpeed;
   }
 
   @Override
@@ -110,32 +115,32 @@ public final class ActivityTrackBusBinding implements ViewBinding {
       }
 
       id = R.id.btnBack;
-      ImageButton btnBack = ViewBindings.findChildViewById(rootView, id);
+      MaterialButton btnBack = ViewBindings.findChildViewById(rootView, id);
       if (btnBack == null) {
         break missingId;
       }
 
-      id = R.id.btnReportIssue;
-      MaterialButton btnReportIssue = ViewBindings.findChildViewById(rootView, id);
-      if (btnReportIssue == null) {
+      id = R.id.fabReport;
+      ExtendedFloatingActionButton fabReport = ViewBindings.findChildViewById(rootView, id);
+      if (fabReport == null) {
         break missingId;
       }
 
-      id = R.id.cardBack;
-      MaterialCardView cardBack = ViewBindings.findChildViewById(rootView, id);
-      if (cardBack == null) {
+      id = R.id.mapView;
+      MapView mapView = ViewBindings.findChildViewById(rootView, id);
+      if (mapView == null) {
         break missingId;
       }
 
-      id = R.id.chipStatus;
-      Chip chipStatus = ViewBindings.findChildViewById(rootView, id);
-      if (chipStatus == null) {
+      id = R.id.timelineContainer;
+      LinearLayout timelineContainer = ViewBindings.findChildViewById(rootView, id);
+      if (timelineContainer == null) {
         break missingId;
       }
 
-      id = R.id.tvBusNumber;
-      TextView tvBusNumber = ViewBindings.findChildViewById(rootView, id);
-      if (tvBusNumber == null) {
+      id = R.id.tvBusId;
+      TextView tvBusId = ViewBindings.findChildViewById(rootView, id);
+      if (tvBusId == null) {
         break missingId;
       }
 
@@ -145,9 +150,9 @@ public final class ActivityTrackBusBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvDriverName;
-      TextView tvDriverName = ViewBindings.findChildViewById(rootView, id);
-      if (tvDriverName == null) {
+      id = R.id.tvDriver;
+      TextView tvDriver = ViewBindings.findChildViewById(rootView, id);
+      if (tvDriver == null) {
         break missingId;
       }
 
@@ -157,21 +162,27 @@ public final class ActivityTrackBusBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvLiveStatus;
+      TextView tvLiveStatus = ViewBindings.findChildViewById(rootView, id);
+      if (tvLiveStatus == null) {
+        break missingId;
+      }
+
       id = R.id.tvNextStop;
       TextView tvNextStop = ViewBindings.findChildViewById(rootView, id);
       if (tvNextStop == null) {
         break missingId;
       }
 
-      id = R.id.tvRemainingStops;
-      TextView tvRemainingStops = ViewBindings.findChildViewById(rootView, id);
-      if (tvRemainingStops == null) {
+      id = R.id.tvSpeed;
+      TextView tvSpeed = ViewBindings.findChildViewById(rootView, id);
+      if (tvSpeed == null) {
         break missingId;
       }
 
       return new ActivityTrackBusBinding((CoordinatorLayout) rootView, bottomSheet, btnBack,
-          btnReportIssue, cardBack, chipStatus, tvBusNumber, tvDistance, tvDriverName, tvETA,
-          tvNextStop, tvRemainingStops);
+          fabReport, mapView, timelineContainer, tvBusId, tvDistance, tvDriver, tvETA, tvLiveStatus,
+          tvNextStop, tvSpeed);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

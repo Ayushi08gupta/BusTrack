@@ -13,10 +13,19 @@ import java.util.List;
 
 public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.AssignmentViewHolder> {
 
+    public interface OnAssignmentActionListener {
+        void onDelete(Bus bus);
+    }
+
     private List<Bus> busList;
+    private OnAssignmentActionListener listener;
 
     public AssignmentAdapter(List<Bus> busList) {
         this.busList = busList;
+    }
+
+    public void setOnAssignmentActionListener(OnAssignmentActionListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -56,6 +65,10 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
         boolean isActive = "active".equalsIgnoreCase(bus.getStatus());
         holder.chipStatus.setText(isActive ? "LIVE" : "IDLE");
         holder.chipStatus.setChipBackgroundColorResource(isActive ? android.R.color.holo_green_dark : android.R.color.darker_gray);
+
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) listener.onDelete(bus);
+        });
     }
 
     @Override
@@ -71,6 +84,7 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
     static class AssignmentViewHolder extends RecyclerView.ViewHolder {
         TextView tvBusNumber, tvRouteName, tvDriverName, tvNextStop;
         Chip chipStatus;
+        View btnDelete;
 
         public AssignmentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +93,7 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
             tvDriverName = itemView.findViewById(R.id.tvDriverName);
             tvNextStop = itemView.findViewById(R.id.tvNextStop);
             chipStatus = itemView.findViewById(R.id.chipRouteStatus);
+            btnDelete = itemView.findViewById(R.id.btnDeleteAssignment);
         }
     }
 }

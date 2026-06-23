@@ -1,54 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- ================= PASTEL BACKGROUND SYSTEM ================= -->
-    <color name="background">#F8FAFC</color> <!-- soft lavender-white -->
-    <color name="foreground">#2D2D2D</color>
+    <!-- ================= MODERN DESIGN SYSTEM ================= -->
+    <color name="primary">#2563EB</color>
+    <color name="primary_dark">#1D4ED8</color>
+    <color name="primary_light">#DBEAFE</color>
     
-    <!-- ================= PRIMARY SYSTEM (Lavender) ================= -->
-    <color name="primary">#C4B5FD</color>
-    <color name="primary_dark">#A995F7</color>
-    <color name="primary_light">#DDD6FE</color>
+    <color name="success">#22C55E</color>
+    <color name="warning">#F59E0B</color>
+    <color name="danger">#EF4444</color>
 
-    <!-- Compatibility mapping for default Material colors -->
-    <color name="purple_500">#C4B5FD</color> <!-- mapping to primary -->
-    <color name="purple_700">#A995F7</color> <!-- mapping to primary_dark -->
-    <color name="purple_200">#DDD6FE</color>
+    <color name="background">#F8FAFC</color>
+    <color name="card_bg">#FFFFFF</color>
 
-    <!-- ================= SECONDARY (Sky Blue) ================= -->
-    <color name="secondary">#7DD3FC</color>
-    <color name="secondary_dark">#6DC4F0</color>
-    <color name="teal_200">#7DD3FC</color> <!-- mapping to secondary -->
-    <color name="teal_700">#6DC4F0</color>
-
-    <!-- ================= ACCENT (Mint Green) ================= -->
-    <color name="accent">#6EE7B7</color>
-    <color name="accent_dark">#5EDBA0</color>
-
-    <!-- ================= PEACH HIGHLIGHT ================= -->
-    <color name="peach">#FDBA74</color>
-
-    <!-- ================= STATUS COLORS ================= -->
-    <color name="success_green">#22C55E</color>
-    <color name="warning">#F97316</color>
-    <color name="error">#FF6B6B</color>
-    <color name="danger_red">#EF4444</color>
-
-    <!-- ================= SURFACES ================= -->
-    <color name="white">#FFFFFF</color>
-
-    <!-- Glassmorphism-style cards -->
-    <color name="card_bg">#CCFFFFFF</color> <!-- semi-transparent white -->
-    <color name="card_dark">#CC1A1A1A</color>
-
-    <!-- Borders / dividers -->
-    <color name="border">#E2E8F0</color>
-
-    <!-- Text Colors -->
-    <color name="text_primary">#1E293B</color>
+    <color name="text_primary">#0F172A</color>
     <color name="text_secondary">#64748B</color>
+    <color name="text_muted">#94A3B8</color>
 
-    <!-- Map / UI background fallback -->
-    <color name="surface_soft">#F8FAFC</color>
+    <color name="divider">#E2E8F0</color>
+    <color name="border">#F1F5F9</color>
 
+    <!-- Legacy / Compatibility for other modules -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="glass_white">#CCFFFFFF</color>
+    <color name="success_green">#22C55E</color>
+    <color name="primary_variant">#1D4ED8</color>
+    <color name="danger_red">#EF4444</color>
+    <color name="error">#EF4444</color>
+    <color name="accent">#2563EB</color>
+
+    <!-- Old Material compatibility -->
+    <color name="purple_500">#2563EB</color>
+    <color name="purple_700">#1D4ED8</color>
+    <color name="purple_200">#DBEAFE</color>
+    <color name="teal_200">#2563EB</color>
+    <color name="teal_700">#1D4ED8</color>
 </resources>

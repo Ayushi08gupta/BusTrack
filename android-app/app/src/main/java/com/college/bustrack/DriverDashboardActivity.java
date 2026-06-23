@@ -35,11 +35,14 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.button.MaterialButton;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,6 +56,7 @@ public class DriverDashboardActivity extends AppCompatActivity implements OnMapR
     private Polyline routePolyline;
     private List<Marker> stopMarkers = new ArrayList<>();
     private FusedLocationProviderClient fusedLocationClient;
+    private Socket mSocket;
 
     private TextView tvWelcomeDriver, tvTripStatus, tvBusNumber;
     private MaterialButton btnStartTrip, btnEndTrip;
@@ -74,6 +78,7 @@ public class DriverDashboardActivity extends AppCompatActivity implements OnMapR
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         initViews();
+        setupSocket();
         map.onCreate(savedInstanceState);
         map.getMapAsync(this);
 
@@ -89,6 +94,11 @@ public class DriverDashboardActivity extends AppCompatActivity implements OnMapR
 
         btnEndTrip.setOnClickListener(v -> stopJourney());
 
+        tvTripStatus.setOnLongClickListener(v -> {
+            if (isTripActive) showDelayDialog();
+            return true;
+        });
+
         btnLogout.setOnClickListener(v -> {
             if (isTripActive) stopJourney();
             sessionManager.logout();
@@ -97,6 +107,34 @@ public class DriverDashboardActivity extends AppCompatActivity implements OnMapR
         });
 
         fetchAssignment();
+    }
+
+    private void setupSocket() {
+        try {
+            mSocket = IO.socket(ApiClient.getBaseUrl());
+            mSocket.on("assignment:updated", args -> runOnUiThread(this::fetchAssignment));
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showDelayDialog() {
+        String[] options = {"5 mins", "10 mins", "15 mins"};
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Select Delay")
+                .setItems(options, (dialog, which) -> {
+                    String delay = options[which];
+                    if (mSocket != null && mSocket.connected() && assignedBus != null) {
+                        try {
+                            org.json.JSONObject data = new org.json.JSONObject();
+                            data.put("busId", assignedBus.getId());
+                            data.put("delay", delay);
+                            mSocket.emit("bus:delay", data);
+                            Toast.makeText(this, "Delay alert sent: " + delay, Toast.LENGTH_SHORT).show();
+                        } catch (org.json.JSONException e) { e.printStackTrace(); }
+                    }
+                }).show();
     }
 
     private void initViews() {
@@ -330,6 +368,10 @@ public class DriverDashboardActivity extends AppCompatActivity implements OnMapR
     protected void onDestroy() {
         super.onDestroy();
         map.onDestroy();
+        if (mSocket != null) {
+            mSocket.disconnect();
+            mSocket.off();
+        }
     }
 
     @Override

@@ -71,7 +71,11 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
             tvBusNumber.setText(bus.getBusNumber());
             
             boolean isActive = "active".equalsIgnoreCase(bus.getStatus());
-            tvStatus.setText(isActive ? "🟢 LIVE" : "⚪ OFFLINE");
+            tvStatus.setText(isActive ? "ONLINE" : "OFFLINE");
+            tvStatus.setTextColor(androidx.core.content.ContextCompat.getColor(itemView.getContext(), isActive ? R.color.success : R.color.danger));
+            if (statusChipCard != null) {
+                statusChipCard.setCardBackgroundColor(androidx.core.content.ContextCompat.getColor(itemView.getContext(), isActive ? R.color.primary_light : R.color.border));
+            }
             
             if (bus.getRouteId() != null) {
                 tvRoutePath.setText(bus.getRouteId().getRouteName());
@@ -81,8 +85,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
 
             tvDriverName.setText("Driver: " + (bus.getDriverId() != null ? bus.getDriverId().getName() : "N/A"));
             
-            // For now, static update text as per principle 2
-            tvLastUpdated.setText("Updated just now");
+            if (bus.getCurrentLocation() != null && bus.getCurrentLocation().getTimestamp() != null) {
+                tvLastUpdated.setVisibility(View.VISIBLE);
+                tvLastUpdated.setText("Updated: " + bus.getCurrentLocation().getTimestamp());
+            } else {
+                tvLastUpdated.setVisibility(View.GONE);
+            }
 
             btnTrackNow.setOnClickListener(v -> listener.onBusClick(bus));
             itemView.setOnClickListener(v -> listener.onBusClick(bus));

@@ -43,6 +43,12 @@ public interface ApiService {
             @Body Map<String, String> body
     );
 
+    @GET("api/auth/me")
+    Call<User> getProfile(@Header("Authorization") String token);
+
+    @PUT("api/auth/me")
+    Call<User> updateProfile(@Header("Authorization") String token, @Body Map<String, Object> body);
+
     // --- Admin User Management ---
     @GET("api/admin/users")
     Call<List<User>> adminGetUsers(@Header("Authorization") String token);
@@ -59,9 +65,15 @@ public interface ApiService {
     @DELETE("api/admin/users/{id}")
     Call<GenericResponse> adminDeleteUser(@Header("Authorization") String token, @Path("id") String id);
 
+    @GET("api/admin/drivers/available")
+    Call<List<User>> getAvailableDrivers(@Header("Authorization") String token);
+
     // --- Admin Bus & Route Management ---
     @GET("api/admin/buses")
     Call<List<Bus>> adminGetBuses(@Header("Authorization") String token);
+
+    @GET("api/admin/buses/available")
+    Call<List<Bus>> getAvailableBuses(@Header("Authorization") String token);
 
     @POST("api/admin/buses")
     Call<GenericResponse> adminAddBus(@Header("Authorization") String token, @Body Map<String, Object> busData);
@@ -77,6 +89,9 @@ public interface ApiService {
 
     @POST("api/admin/full-assignment")
     Call<GenericResponse> adminFullAssignment(@Header("Authorization") String token, @Body Map<String, Object> assignmentData);
+
+    @DELETE("api/admin/assignment/{busId}")
+    Call<GenericResponse> adminDeleteAssignment(@Header("Authorization") String token, @Path("busId") String busId);
 
     // --- Student Section ---
     @GET("api/student/bus-info")

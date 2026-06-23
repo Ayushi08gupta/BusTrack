@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +31,7 @@ import com.college.bustrack.api.ApiService;
 import com.college.bustrack.models.Bus;
 import com.college.bustrack.models.Route;
 import com.college.bustrack.models.Stop;
+import com.college.bustrack.models.User;
 import com.college.bustrack.utils.SessionManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -51,7 +53,10 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -143,18 +148,51 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
         // Home Screen Views
         etHomeSearch = homeContainer.findViewById(R.id.etHomeSearch);
         ivToolbarProfile = findViewById(R.id.ivToolbarProfile);
+
+        // Available Buses Tab Controls
+        etBusListSearch = busesContainer.findViewById(R.id.etBusListSearch);
+        View btnFilter = busesContainer.findViewById(R.id.btnFilter);
+        View btnSort = busesContainer.findViewById(R.id.btnSort);
+
+        if (etBusListSearch != null) {
+            etBusListSearch.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) { filterBuses(s.toString()); }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
+        }
+        if (btnFilter != null) btnFilter.setOnClickListener(v -> showFilterDialog());
+        if (btnSort != null) btnSort.setOnClickListener(v -> showSortDialog());
         
         // Quick Action Buttons
         View btnQuickTrack = homeContainer.findViewById(R.id.btnQuickTrack);
         View btnQuickRoutes = homeContainer.findViewById(R.id.btnQuickRoutes);
         View btnQuickSchedule = homeContainer.findViewById(R.id.btnQuickSchedule);
+        View btnSeeAll = homeContainer.findViewById(R.id.btnSeeAllBuses);
 
-        if (btnQuickTrack != null) btnQuickTrack.setOnClickListener(v -> showState("track"));
-        if (btnQuickRoutes != null) btnQuickRoutes.setOnClickListener(v -> showState("buses"));
+        if (btnQuickTrack != null) btnQuickTrack.setOnClickListener(v -> {
+            if (sessionManager.getAssignedBusId() != null) {
+                apiService.getBusFullDetails(sessionManager.getToken(), sessionManager.getAssignedBusId()).enqueue(new Callback<Bus>() {
+                    @Override
+                    public void onResponse(Call<Bus> call, Response<Bus> response) {
+                        if (response.isSuccessful() && response.body() != null) startTrackingBus(response.body());
+                    }
+                    @Override public void onFailure(Call<Bus> call, Throwable t) {}
+                });
+            } else {
+                Toast.makeText(this, "No assigned bus to track", Toast.LENGTH_SHORT).show();
+            }
+        });
+        if (btnQuickRoutes != null) btnQuickRoutes.setOnClickListener(v -> bottomNav.setSelectedItemId(R.id.nav_buses));
+        if (btnSeeAll != null) btnSeeAll.setOnClickListener(v -> bottomNav.setSelectedItemId(R.id.nav_buses));
         if (btnQuickSchedule != null) btnQuickSchedule.setOnClickListener(v -> 
             Toast.makeText(this, "Schedule coming soon", Toast.LENGTH_SHORT).show());
 
         if (ivToolbarProfile != null) ivToolbarProfile.setOnClickListener(v -> showState("profile"));
+
+        // Profile Buttons
+        View btnEditProfile = profileContainer.findViewById(R.id.btnEditProfile);
+        if (btnEditProfile != null) btnEditProfile.setOnClickListener(v -> showEditProfileDialog());
 
         // Bottom Sheet Initialization
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -237,10 +275,13 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
             case "home":
                 homeContainer.setVisibility(View.VISIBLE);
                 if (getSupportActionBar() != null) getSupportActionBar().setTitle("BusTrack");
+                fetchAssignedBus();
+                loadAllBuses();
                 break;
             case "buses":
                 busesContainer.setVisibility(View.VISIBLE);
                 if (getSupportActionBar() != null) getSupportActionBar().setTitle("Available Buses");
+                loadAllBuses();
                 break;
             case "track":
                 trackContainer.setVisibility(View.VISIBLE);
@@ -259,13 +300,21 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
         TextView tvName = profileContainer.findViewById(R.id.tvProfileName);
         TextView tvId = profileContainer.findViewById(R.id.tvProfileId);
         
-        tvName.setText(sessionManager.getUserName() != null ? sessionManager.getUserName() : "Student");
-        tvId.setText("ID: " + (sessionManager.getUserId() != null ? sessionManager.getUserId() : "N/A"));
+        apiService.getProfile(sessionManager.getToken()).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    User user = response.body();
+                    tvName.setText(user.getName());
+                    tvId.setText("ID: " + user.getId());
 
-        // Setup individual info items using layout includes
-        updateProfileInfo(R.id.infoEmail, "Email", sessionManager.getUserEmail(), android.R.drawable.ic_dialog_email);
-        updateProfileInfo(R.id.infoDept, "Department", "Computer Science", android.R.drawable.ic_menu_info_details);
-        updateProfileInfo(R.id.infoSemester, "Semester", "6th Semester", android.R.drawable.ic_menu_today);
+                    updateProfileInfo(R.id.infoEmail, "Email", user.getEmail(), android.R.drawable.ic_dialog_email);
+                    updateProfileInfo(R.id.infoDept, "Department", user.getDepartment(), android.R.drawable.ic_menu_info_details);
+                    updateProfileInfo(R.id.infoSemester, "Semester", user.getSemester(), android.R.drawable.ic_menu_today);
+                }
+            }
+            @Override public void onFailure(Call<User> call, Throwable t) {}
+        });
         
         profileContainer.findViewById(R.id.btnLogoutProfile).setOnClickListener(v -> logout());
     }
@@ -276,6 +325,105 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
         ((TextView) view.findViewById(R.id.tvLabel)).setText(label);
         ((TextView) view.findViewById(R.id.tvValue)).setText(value != null ? value : "Not specified");
         ((ImageView) view.findViewById(R.id.ivIcon)).setImageResource(iconRes);
+    }
+
+    private void filterBuses(String query) {
+        if (allBuses == null) return;
+        List<Bus> filtered = new ArrayList<>();
+        for (Bus b : allBuses) {
+            String q = query.toLowerCase();
+            if (b.getBusNumber().toLowerCase().contains(q) || 
+               (b.getRouteId() != null && b.getRouteId().getRouteName().toLowerCase().contains(q))) {
+                filtered.add(b);
+            }
+        }
+        allBusAdapter.updateBuses(filtered);
+    }
+
+    private void showFilterDialog() {
+        String[] options = {"All", "Online Only", "Offline Only"};
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Filter Buses")
+                .setItems(options, (dialog, which) -> {
+                    List<Bus> filtered = new ArrayList<>();
+                    for (Bus b : allBuses) {
+                        boolean online = "active".equalsIgnoreCase(b.getStatus());
+                        if (which == 0) filtered.add(b);
+                        else if (which == 1 && online) filtered.add(b);
+                        else if (which == 2 && !online) filtered.add(b);
+                    }
+                    allBusAdapter.updateBuses(filtered);
+                }).show();
+    }
+
+    private void showSortDialog() {
+        String[] options = {"Bus Number", "Route Name", "Status"};
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Sort Buses")
+                .setItems(options, (dialog, which) -> {
+                    List<Bus> sorted = new ArrayList<>(allBuses);
+                    java.util.Collections.sort(sorted, (b1, b2) -> {
+                        if (which == 0) return b1.getBusNumber().compareTo(b2.getBusNumber());
+                        if (which == 1) {
+                            String r1 = b1.getRouteId() != null ? b1.getRouteId().getRouteName() : "";
+                            String r2 = b2.getRouteId() != null ? b2.getRouteId().getRouteName() : "";
+                            return r1.compareTo(r2);
+                        }
+                        return (b1.getStatus() != null ? b1.getStatus() : "").compareTo(b2.getStatus() != null ? b2.getStatus() : "");
+                    });
+                    allBusAdapter.updateBuses(sorted);
+                }).show();
+    }
+
+    private void showEditProfileDialog() {
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(50, 40, 50, 10);
+
+        EditText etDept = new EditText(this);
+        etDept.setHint("Department");
+        layout.addView(etDept);
+
+        EditText etSem = new EditText(this);
+        etSem.setHint("Semester");
+        layout.addView(etSem);
+
+        // Pre-fill with current values if available
+        apiService.getProfile(sessionManager.getToken()).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    etDept.setText(response.body().getDepartment());
+                    etSem.setText(response.body().getSemester());
+                }
+            }
+            @Override public void onFailure(Call<User> call, Throwable t) {}
+        });
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Edit Profile")
+                .setView(layout)
+                .setPositiveButton("Save", (d, w) -> {
+                    String dept = etDept.getText().toString();
+                    String sem = etSem.getText().toString();
+                    
+                    Map<String, Object> body = new HashMap<>();
+                    body.put("department", dept);
+                    body.put("semester", sem);
+                    
+                    apiService.updateProfile(sessionManager.getToken(), body).enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            if (response.isSuccessful()) {
+                                setupProfileData();
+                                Toast.makeText(StudentDashboardActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        @Override public void onFailure(Call<User> call, Throwable t) {}
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void setupSearchActions() {
@@ -384,7 +532,11 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
             public void onResponse(Call<Bus> call, Response<Bus> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Bus bus = response.body();
+                    sessionManager.setAssignedBusId(bus.getId());
                     updateAssignedBusCard(bus);
+                } else {
+                    View card = homeContainer.findViewById(R.id.assignedBusCard);
+                    if (card != null) card.setVisibility(View.GONE);
                 }
             }
             @Override
@@ -395,6 +547,7 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
     private void updateAssignedBusCard(Bus bus) {
         View card = homeContainer.findViewById(R.id.assignedBusCard);
         if (card == null || bus == null) return;
+        card.setVisibility(View.VISIBLE);
         
         ((TextView) card.findViewById(R.id.tvBusNumber)).setText(bus.getBusNumber());
         if (bus.getRouteId() != null) ((TextView) card.findViewById(R.id.tvRoutePath)).setText(bus.getRouteId().getRouteName());
@@ -402,6 +555,12 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
         boolean isActive = "active".equalsIgnoreCase(bus.getStatus());
         TextView tvStatus = card.findViewById(R.id.tvStatus);
         tvStatus.setText(isActive ? "ONLINE" : "OFFLINE");
+        tvStatus.setTextColor(isActive ? ContextCompat.getColor(this, R.color.success) : ContextCompat.getColor(this, R.color.danger));
+        
+        MaterialCardView statusCard = card.findViewById(R.id.statusChipCard);
+        if (statusCard != null) {
+            statusCard.setCardBackgroundColor(isActive ? ContextCompat.getColor(this, R.color.primary_light) : Color.LTGRAY);
+        }
         
         card.findViewById(R.id.btnTrackNow).setOnClickListener(v -> startTrackingBus(bus));
         
@@ -453,6 +612,7 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
             mSocket.on(Socket.EVENT_CONNECT, args -> runOnUiThread(() -> {
                 if (selectedBusId != null) joinBusRoom();
             }));
+            
             mSocket.on("location:update", args -> {
                 JSONObject data = (JSONObject) args[0];
                 try {
@@ -460,10 +620,60 @@ public class StudentDashboardActivity extends AppCompatActivity implements OnMap
                     if (busId.equals(selectedBusId)) {
                         double lat = data.getDouble("latitude");
                         double lng = data.getDouble("longitude");
-                        runOnUiThread(() -> updateBusLocation(new LatLng(lat, lng)));
+                        float speed = (float) data.optDouble("speed", 0.0);
+                        runOnUiThread(() -> {
+                            updateBusLocation(new LatLng(lat, lng));
+                            if (tvSpeed != null) tvSpeed.setText(Math.round(speed * 3.6) + " km/h");
+                        });
                     }
                 } catch (JSONException e) { Log.e("Socket", "Error parsing location", e); }
             });
+
+            mSocket.on("trip:started", args -> {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                    String busId = data.getString("busId");
+                    runOnUiThread(() -> {
+                        if (busId.equals(selectedBusId)) updateStatusTag("active");
+                        loadAllBuses(); // Refresh all to see online status
+                        fetchAssignedBus(); // Refresh assigned
+                    });
+                } catch (JSONException e) { e.printStackTrace(); }
+            });
+
+            mSocket.on("trip:ended", args -> {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                    String busId = data.getString("busId");
+                    runOnUiThread(() -> {
+                        if (busId.equals(selectedBusId)) updateStatusTag("inactive");
+                        loadAllBuses();
+                        fetchAssignedBus();
+                    });
+                } catch (JSONException e) { e.printStackTrace(); }
+            });
+
+            mSocket.on("bus:delay", args -> {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                    String busId = data.getString("busId");
+                    String delay = data.getString("delay"); // e.g. "5 mins"
+                    runOnUiThread(() -> {
+                        if (busId.equals(selectedBusId)) {
+                            if (tvETA != null) tvETA.setText("Delayed: " + delay);
+                            Toast.makeText(this, "Bus " + busId + " is delayed by " + delay, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (JSONException e) { e.printStackTrace(); }
+            });
+
+            mSocket.on("assignment:updated", args -> {
+                runOnUiThread(() -> {
+                    fetchAssignedBus();
+                    loadAllBuses();
+                });
+            });
+
             mSocket.on("bus:offline", args -> runOnUiThread(() -> updateStatusTag("inactive")));
             mSocket.connect();
         } catch (URISyntaxException e) { Log.e("Socket", "URI Syntax Error", e); }

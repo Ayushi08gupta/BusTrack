@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-72:12
-INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-72:12
-INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-72:12
-INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-72:12
+ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-77:12
+INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-77:12
+INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-77:12
+INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:2:1-77:12
 MERGED from [androidx.databinding:viewbinding:8.13.2] C:\Users\HP\.gradle\caches\8.13\transforms\04940e426d60bf1ba2fba2cbc45d408e\transformed\jetified-viewbinding-8.13.2\AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\HP\.gradle\caches\8.13\transforms\34788bf6a743afff2daeb34aec3f72ef\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\HP\.gradle\caches\8.13\transforms\f4e8e2e72a5e2fbdba4457baab59d534\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
@@ -137,8 +137,8 @@ ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidM
 	android:name
 		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:19:22-77
 application
-ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:22:5-70:19
-INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:22:5-70:19
+ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:22:5-75:19
+INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:22:5-75:19
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\HP\.gradle\caches\8.13\transforms\34788bf6a743afff2daeb34aec3f72ef\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\HP\.gradle\caches\8.13\transforms\34788bf6a743afff2daeb34aec3f72ef\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\HP\.gradle\caches\8.13\transforms\f4e8e2e72a5e2fbdba4457baab59d534\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -243,16 +243,24 @@ ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidM
 		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:61:13-37
 	android:name
 		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:59:13-51
-service#com.college.bustrack.LocationTrackingService
-ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:64:9-68:56
-	android:enabled
-		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:66:13-35
+activity#com.college.bustrack.BusAssignmentActivity
+ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:63:9-66:40
+	android:label
+		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:65:13-47
 	android:exported
-		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:67:13-37
-	android:foregroundServiceType
-		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:68:13-53
+		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:66:13-37
 	android:name
-		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:65:13-52
+		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:64:13-50
+service#com.college.bustrack.LocationTrackingService
+ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:69:9-73:56
+	android:enabled
+		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:71:13-35
+	android:exported
+		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:72:13-37
+	android:foregroundServiceType
+		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:73:13-53
+	android:name
+		ADDED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml:70:13-52
 uses-sdk
 INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\HP\StudioProjects\BusTrack\android-app\app\src\main\AndroidManifest.xml

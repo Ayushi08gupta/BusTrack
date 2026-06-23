@@ -49,6 +49,17 @@
                 app:chipBackgroundColor="@color/success_green"
                 android:textColor="@color/white"
                 app:chipCornerRadius="8dp" />
+
+            <ImageButton
+                android:id="@+id/btnDeleteAssignment"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_delete"
+                android:clickable="true"
+                android:focusable="true"
+                app:tint="@color/danger" />
         </LinearLayout>
 
         <TextView

@@ -20,6 +20,10 @@
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_route_management.xml"
     },
     {
+        "merged": "com.college.bustrack.app-debug-43:/layout_item_assignment.xml.flat",
+        "source": "com.college.bustrack.app-main-45:/layout/item_assignment.xml"
+    },
+    {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_fragment_routes.xml.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\fragment_routes.xml"
     },
@@ -44,10 +48,6 @@
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\dialog_assign_bus.xml"
     },
     {
-        "merged": "com.college.bustrack.app-debug-43:/layout_item_bus_card.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/item_bus_card.xml"
-    },
-    {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
@@ -66,10 +66,6 @@
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_fragment_buses.xml.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\fragment_buses.xml"
-    },
-    {
-        "merged": "com.college.bustrack.app-debug-43:/layout_activity_student_dashboard.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/activity_student_dashboard.xml"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_item_bus_card.xml.flat",
@@ -112,16 +108,12 @@
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\menu\\admin_drawer_menu.xml"
     },
     {
-        "merged": "com.college.bustrack.app-debug-43:/layout_layout_empty_state.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/layout_empty_state.xml"
-    },
-    {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\drawable_ic_launcher_foreground.xml.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\drawable\\ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.college.bustrack.app-debug-43:/menu_student_drawer_menu.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/menu/student_drawer_menu.xml"
+        "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\menu_student_drawer_menu.xml.flat",
+        "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\menu\\student_drawer_menu.xml"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_item_bus_management.xml.flat",
@@ -132,24 +124,12 @@
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\mipmap-hdpi\\ic_launcher_round.webp"
     },
     {
-        "merged": "com.college.bustrack.app-debug-43:/layout_activity_all_buses.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/activity_all_buses.xml"
-    },
-    {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\mipmap-xhdpi_ic_launcher.webp.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\mipmap-xhdpi\\ic_launcher.webp"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_item_assignment_stop.xml.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_assignment_stop.xml"
-    },
-    {
-        "merged": "com.college.bustrack.app-debug-43:/layout_drawer_header_student.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/drawer_header_student.xml"
-    },
-    {
-        "merged": "com.college.bustrack.app-debug-43:/layout_activity_profile_content.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/activity_profile_content.xml"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\drawable_circle_indicator.xml.flat",
@@ -162,6 +142,14 @@
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\menu_bottom_nav_menu.xml.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\menu\\bottom_nav_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_drawer_header_student.xml.flat",
+        "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\drawer_header_student.xml"
+    },
+    {
+        "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_activity_profile_content.xml.flat",
+        "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\activity_profile_content.xml"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_activity_report_issue.xml.flat",
@@ -180,12 +168,16 @@
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\drawable\\ic_launcher_background.xml"
     },
     {
+        "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_layout_empty_state.xml.flat",
+        "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\layout_empty_state.xml"
+    },
+    {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\drawable_circle_primary.xml.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\drawable\\circle_primary.xml"
     },
     {
-        "merged": "com.college.bustrack.app-debug-43:/layout_item_profile_info.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/item_profile_info.xml"
+        "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_item_profile_info.xml.flat",
+        "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\layout\\item_profile_info.xml"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_dialog_forgot_password.xml.flat",
@@ -196,8 +188,8 @@
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\mipmap-xxhdpi\\ic_launcher_round.webp"
     },
     {
-        "merged": "com.college.bustrack.app-debug-43:/drawable_bg_circle_white.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/drawable/bg_circle_white.xml"
+        "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\drawable_bg_circle_white.xml.flat",
+        "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\drawable\\bg_circle_white.xml"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\layout_activity_track_bus.xml.flat",
@@ -234,10 +226,6 @@
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
         "source": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-main-45:\\mipmap-xhdpi\\ic_launcher_round.webp"
-    },
-    {
-        "merged": "com.college.bustrack.app-debug-43:/layout_activity_home.xml.flat",
-        "source": "com.college.bustrack.app-main-45:/layout/activity_home.xml"
     },
     {
         "merged": "C:\\Users\\HP\\.gradle\\daemon\\8.13\\com.college.bustrack.app-debug-43:\\mipmap-mdpi_ic_launcher_round.webp.flat",

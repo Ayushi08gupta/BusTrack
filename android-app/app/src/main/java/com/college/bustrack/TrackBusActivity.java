@@ -227,6 +227,19 @@ public class TrackBusActivity extends AppCompatActivity implements OnMapReadyCal
                 new Handler(Looper.getMainLooper()).post(() -> updateStatus("inactive"));
             });
 
+            mSocket.on("bus:delay", args -> {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                    if (data.getString("busId").equals(busId)) {
+                        String delay = data.getString("delay");
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            tvETA.setText("Delayed: " + delay);
+                            Toast.makeText(this, "Bus is delayed by " + delay, Toast.LENGTH_LONG).show();
+                        });
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            });
+
             mSocket.on("bus:offline", args -> {
                 new Handler(Looper.getMainLooper()).post(() -> updateStatus("inactive"));
             });

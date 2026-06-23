@@ -60,6 +60,11 @@
             android:label="Admin Control Panel"
             android:exported="false" />
 
+        <activity
+            android:name=".BusAssignmentActivity"
+            android:label="New Bus Assignment"
+            android:exported="false" />
+
         <!-- Services -->
         <service
             android:name=".LocationTrackingService"

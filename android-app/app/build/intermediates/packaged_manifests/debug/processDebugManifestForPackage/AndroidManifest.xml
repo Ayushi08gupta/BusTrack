@@ -83,6 +83,10 @@
             android:name="com.college.bustrack.AdminDashboardActivity"
             android:exported="false"
             android:label="Admin Control Panel" />
+        <activity
+            android:name="com.college.bustrack.BusAssignmentActivity"
+            android:exported="false"
+            android:label="New Bus Assignment" />
 
         <!-- Services -->
         <service
